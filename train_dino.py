@@ -45,10 +45,8 @@ def get_args_parser():
     parser = argparse.ArgumentParser('DINO', add_help=False)
 
     # Model parameters
-    parser.add_argument('--arch', default='vit_small', type=str,
-        choices=['vit_tiny', 'vit_small', 'vit_base', 'vit_large', 'deit_tiny', 'deit_small'] + torchvision_archs,
-        help="""Name of architecture to train. For quick experiments with ViTs,
-        we recommend using vit_tiny or vit_small.""")
+    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_tiny', 'vit_small', 'vit_base', 'vit_large', 'deit_tiny', 'deit_small'] + torchvision_archs,
+        help="""Name of architecture to train. For quick experiments with ViTs, we recommend using vit_tiny or vit_small.""")
     parser.add_argument('--patch_size', default=16, type=int, help="""Size in pixels
         of input square patches - default 16 (for 16x16 patches). Using smaller
         values leads to better performance but requires more memory. Applies only
@@ -81,17 +79,11 @@ def get_args_parser():
         mixed precision if the loss is unstable, if reducing the patch size or if training with bigger ViTs.""")
     parser.add_argument('--weight_decay', type=float, default=0.0, help="""Initial value of the weight decay. With ViT, a smaller value at the beginning of training works well.""")
     parser.add_argument('--weight_decay_end', type=float, default=0.0, help="""Final value of the weight decay. We use a cosine schedule for WD and using a larger decay by the end of training improves performance for ViTs.""")
-    parser.add_argument('--clip_grad', type=float, default=1.0, help="""Maximal parameter
-        gradient norm if using gradient clipping. Clipping with norm .3 ~ 1.0 can
-        help optimization for larger ViT architectures. 0 for disabling.""")
+    parser.add_argument('--clip_grad', type=float, default=1.0, help="""Clipping with norm .3 ~ 1.0 can help optimization for larger ViT architectures. 0 for disabling.""")
     parser.add_argument('--batch_size_per_gpu', default=64, type=int, help='Per-GPU batch-size : number of distinct images loaded on one GPU.')
     parser.add_argument('--epochs', default=100, type=int, help='Number of epochs of training.')
-    parser.add_argument('--freeze_last_layer', default=0, type=int, help="""Number of epochs
-        during which we keep the output layer fixed. Typically doing so during
-        the first epoch helps training. Try increasing this value if the loss does not decrease.""")
-    parser.add_argument("--lr", default=0.0005, type=float, help="""Learning rate at the end of
-        linear warmup (highest LR used during training). The learning rate is linearly scaled
-        with the batch size, and specified here for a reference batch size of 256.""")
+    parser.add_argument('--freeze_last_layer', default=0, type=int, help="""Number of epochs during which we keep the output layer fixed.""")
+    parser.add_argument("--lr", default=0.0005, type=float, help="""Learning rate at the end of linear warmup (highest LR used during training).""")
     parser.add_argument("--warmup_epochs", default=0, type=int, help="Number of epochs for the linear learning-rate warm up.")
     parser.add_argument('--min_lr', type=float, default=0.0005, help="""Target LR at the end of optimization. We use a cosine LR schedule with linear warmup.""")
     parser.add_argument('--optimizer', default='adamw', type=str, choices=['adamw', 'sgd', 'lars'], help="""Type of optimizer. We recommend using adamw with ViTs.""")
@@ -101,12 +93,8 @@ def get_args_parser():
         help="""Scale range of the cropped image before resizing, relatively to the origin image.
         Used for large global view cropping. When disabling multi-crop (--local_crops_number 0), we
         recommand using a wider range of scale ("--global_crops_scale 0.14 1." for example)""")
-    parser.add_argument('--local_crops_number', type=int, default=8, help="""Number of small
-        local views to generate. Set this parameter to 0 to disable multi-crop training.
-        When disabling multi-crop we recommend to use "--global_crops_scale 0.14 1." """)
-    parser.add_argument('--local_crops_scale', type=float, nargs='+', default=(0.05, 0.4),
-        help="""Scale range of the cropped image before resizing, relatively to the origin image.
-        Used for small local view cropping of multi-crop.""")
+    parser.add_argument('--local_crops_number', type=int, default=8, help="""Number of small local views to generate. Set this parameter to 0 to disable multi-crop training.""")
+    parser.add_argument('--local_crops_scale', type=float, nargs='+', default=(0.05, 0.4), help="""Scale range of the cropped image before resizing, relatively to the origin image.""")
 
     # Misc
     parser.add_argument("--data_path", default="/scratch/eo41/data/saycam/SAY_5fps_300s_{000000..000009}.tar", type=str, help="""path to dataset""")
@@ -254,10 +242,10 @@ def train_one_epoch(student, teacher, teacher_without_ddp, dino_loss, data_loade
     for _, images in enumerate(data_loader):
         # update weight decay and learning rate according to their schedule
 
-        # for i, param_group in enumerate(optimizer.param_groups):
-        #     param_group["lr"] = lr_schedule[GLOBAL_ITER]
-        #     if i == 0:  # only the first group is regularized
-        #         param_group["weight_decay"] = wd_schedule[GLOBAL_ITER]
+        for i, param_group in enumerate(optimizer.param_groups):
+            param_group["lr"] = lr_schedule[0]
+            if i == 0:  # only the first group is regularized
+                param_group["weight_decay"] = wd_schedule[0]
 
         # move images to gpu
         images = [im.cuda(non_blocking=True) for im in images]
@@ -291,7 +279,7 @@ def train_one_epoch(student, teacher, teacher_without_ddp, dino_loss, data_loade
 
         # EMA update for the teacher
         with torch.no_grad():
-            m = momentum_schedule[GLOBAL_ITER // 2]  # momentum parameter
+            m = momentum_schedule[GLOBAL_ITER // 10]  # momentum parameter
             for param_q, param_k in zip(student.module.parameters(), teacher_without_ddp.parameters()):
                 param_k.data.mul_(m).add_((1 - m) * param_q.detach().data)
 
@@ -347,8 +335,7 @@ class DINOLoss(nn.Module):
         # we apply a warm up for the teacher temperature because
         # a too high temperature makes the training instable at the beginning
         self.teacher_temp_schedule = np.concatenate((
-            np.linspace(warmup_teacher_temp,
-                        teacher_temp, warmup_teacher_temp_epochs),
+            np.linspace(warmup_teacher_temp, teacher_temp, warmup_teacher_temp_epochs),
             np.ones(nepochs - warmup_teacher_temp_epochs) * teacher_temp
         ))
 

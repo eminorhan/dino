@@ -2,23 +2,21 @@ Launced with slurm
 Launced with slurm
 Launced with slurm
 Launced with slurm
-world size, rank, gpu, device count: 4 2 2 4
-world size, rank, gpu, device count: 4 1 1 4
 world size, rank, gpu, device count: 4 0 0 4
+world size, rank, gpu, device count: 4 2 2 4
 world size, rank, gpu, device count: 4 3 3 4
+world size, rank, gpu, device count: 4 1 1 4
 | distributed init (rank 0): env://
-| distributed init (rank 3): env://
-| distributed init (rank 2): env://
 | distributed init (rank 1): env://
-fatal: not a git repository (or any parent up to mount point /)
-Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+| distributed init (rank 2): env://
+| distributed init (rank 3): env://
 git:
-  sha: N/A, status: clean, branch: N/A
+  sha: 454bcbd73f5de111d637ba795bd2f9fedddd631b, status: has uncommited changes, branch: master
 
-arch: vit_large
-batch_size_per_gpu: 52
+arch: vit_base
+batch_size_per_gpu: 128
 clip_grad: 1.0
-data_path: /scratch/eo41/data/saycam/A_5fps_300s_{000000..000002}.tar
+data_path: /scratch/eo41/data/saycam/Y_5fps_300s_{000000..000002}.tar
 dist_url: env://
 epochs: 100
 freeze_last_layer: 0
@@ -34,11 +32,11 @@ norm_last_layer: True
 num_workers: 8
 optimizer: adamw
 out_dim: 65536
-output_dir: /scratch/eo41/dino/models_vitl
+output_dir: /scratch/eo41/dino/models_vitb
 patch_size: 16
 print_freq: 5000
 rank: 0
-save_prefix: a_5fps_vitl16
+save_prefix: y_5fps_vitb16
 saveckp_freq: 5000
 seed: 1
 teacher_temp: 0.04
@@ -55,25 +53,19 @@ world_size: 4
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py:478: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 4, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
   warnings.warn(_create_warning_msg(
 Data loaded.
-fatal: not a git repository (or any parent up to mount point /)
-Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
-fatal: not a git repository (or any parent up to mount point /)
-Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
-fatal: not a git repository (or any parent up to mount point /)
-Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
-/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
-  warnings.warn(
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
   warnings.warn(
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
   warnings.warn(
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py:478: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 4, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
   warnings.warn(_create_warning_msg(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py:478: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 4, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
   warnings.warn(_create_warning_msg(
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/utils/data/dataloader.py:478: UserWarning: This DataLoader will create 8 worker processes in total. Our suggested max number of worker in current system is 4, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
   warnings.warn(_create_warning_msg(
-Student and Teacher are built: they are both vit_large network.
+Student and Teacher are built: they are both vit_base network.
 Loss, optimizer and schedulers ready.
 Starting DINO training !
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3631: UserWarning: Default upsampling behavior when mode=bicubic is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
@@ -92,11 +84,7 @@ Starting DINO training !
   warnings.warn(
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3679: UserWarning: The default behavior for interpolate/upsample with float scale_factor changed in 1.6.0 to align with other frameworks/libraries, and now uses scale_factor directly, instead of relying on the computed output size. If you wish to restore the old behavior, please set recompute_scale_factor=True. See the documentation of nn.Upsample for details. 
   warnings.warn(
-Averaged stats: loss: 10.683060 (10.707832)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
-Averaged stats: loss: 10.882208 (11.015643)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
-Averaged stats: loss: 10.696976 (10.749059)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
-Averaged stats: loss: 10.476379 (10.551004)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
-Averaged stats: loss: 10.362014 (10.374939)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
-Averaged stats: loss: 10.064564 (10.086303)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
-Averaged stats: loss: 9.441823 (9.691020)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
-Averaged stats: loss: 8.864777 (9.181622)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 10.782499 (10.793261)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 10.925715 (11.032087)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 10.491296 (10.720326)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 9.968172 (10.247533)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
