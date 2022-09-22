@@ -194,16 +194,25 @@ if __name__ == '__main__':
 
     attentions = attentions.reshape(nh, w_featmap, h_featmap)
     attentions = nn.functional.interpolate(attentions.unsqueeze(0), scale_factor=args.patch_size, mode="nearest")[0].cpu().numpy()
+    
+    new_attentions = torch.zeros(nh, 3, 1600, 1600)
+    new_attentions[:, 0, :, :] = torch.from_numpy(attentions)
+    new_attentions[:, 1, :, :] = torch.from_numpy(attentions)
+    new_attentions[:, 2, :, :] = torch.from_numpy(attentions)
 
-    # save attentions heatmaps
-    os.makedirs(args.output_dir, exist_ok=True)
-    torchvision.utils.save_image(torchvision.utils.make_grid(img, normalize=True, scale_each=True), os.path.join(args.output_dir, "img.png"))
-    for j in range(nh):
-        fname = os.path.join(args.output_dir, "attn-head" + str(j) + ".png")
-        plt.imsave(fname=fname, arr=attentions[j], format='png')
-        print(f"{fname} saved.")
+    display_tensor = torch.cat((img, new_attentions))
+    print(display_tensor.shape)
+    torchvision.utils.save_image(display_tensor, "atts.jpeg", nrow=5, padding=1, normalize=True, scale_each=True)
 
-    if args.threshold is not None:
-        image = skimage.io.imread(os.path.join(args.output_dir, "img.png"))
-        for j in range(nh):
-            display_instances(image, th_attn[j], fname=os.path.join(args.output_dir, "mask_th" + str(args.threshold) + "_head" + str(j) +".png"), blur=False)
+    # # save attentions heatmaps
+    # os.makedirs(args.output_dir, exist_ok=True)
+    # torchvision.utils.save_image(torchvision.utils.make_grid(img, normalize=True, scale_each=True), os.path.join(args.output_dir, "img.png"))
+    # for j in range(nh):
+    #     fname = os.path.join(args.output_dir, "attn-head" + str(j) + ".png")
+    #     plt.imsave(fname=fname, arr=attentions[j], format='png')
+    #     print(f"{fname} saved.")
+
+    # if args.threshold is not None:
+    #     image = skimage.io.imread(os.path.join(args.output_dir, "img.png"))
+    #     for j in range(nh):
+    #         display_instances(image, th_attn[j], fname=os.path.join(args.output_dir, "mask_th" + str(args.threshold) + "_head" + str(j) +".png"), blur=False)

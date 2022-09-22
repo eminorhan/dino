@@ -73,10 +73,7 @@ def get_args_parser():
     parser.add_argument('--warmup_teacher_temp_epochs', default=0, type=int, help='Number of warmup epochs for the teacher temperature')
 
     # Training/Optimization parameters
-    parser.add_argument('--use_fp16', type=dino_utils.bool_flag, default=False, help="""Whether or not
-        to use half precision for training. Improves training time and memory requirements,
-        but can provoke instability and slight decay of performance. We recommend disabling
-        mixed precision if the loss is unstable, if reducing the patch size or if training with bigger ViTs.""")
+    parser.add_argument('--use_fp16', type=dino_utils.bool_flag, default=False, help="""Whether or not to use half precision for training. We recommend disabling if reducing the patch size or if training with bigger ViTs.""")
     parser.add_argument('--weight_decay', type=float, default=0.0, help="""Initial value of the weight decay. With ViT, a smaller value at the beginning of training works well.""")
     parser.add_argument('--weight_decay_end', type=float, default=0.0, help="""Final value of the weight decay. We use a cosine schedule for WD and using a larger decay by the end of training improves performance for ViTs.""")
     parser.add_argument('--clip_grad', type=float, default=1.0, help="""Clipping with norm .3 ~ 1.0 can help optimization for larger ViT architectures. 0 for disabling.""")
@@ -122,7 +119,7 @@ def train_dino(args):
     # ============ preparing data ... ============
     transform = DataAugmentationDINO(args.global_crops_scale, args.local_crops_scale, args.local_crops_number)
 
-    dataset = (wds.WebDataset(args.data_path, resampled=True).shuffle(1000).decode("pil").to_tuple("jpg").map(preprocess).map(transform))
+    dataset = (wds.WebDataset(args.data_path, resampled=True).shuffle(10000, initial=10000).decode("pil").to_tuple("jpg").map(preprocess).map(transform))
     data_loader = wds.WebLoader(dataset, shuffle=False, batch_size=args.batch_size_per_gpu, num_workers=args.num_workers)
 
     print(f"Data loaded.")
@@ -145,16 +142,9 @@ def train_dino(args):
         print(f"Unknow architecture: {args.arch}")
 
     # multi-crop wrapper handles forward with inputs of different resolutions
-    student = dino_utils.MultiCropWrapper(student, DINOHead(
-        embed_dim,
-        args.out_dim,
-        use_bn=args.use_bn_in_head,
-        norm_last_layer=args.norm_last_layer,
-    ))
-    teacher = dino_utils.MultiCropWrapper(
-        teacher,
-        DINOHead(embed_dim, args.out_dim, args.use_bn_in_head),
-    )
+    student = dino_utils.MultiCropWrapper(student, DINOHead(embed_dim, args.out_dim, use_bn=args.use_bn_in_head, norm_last_layer=args.norm_last_layer))
+    teacher = dino_utils.MultiCropWrapper(teacher, DINOHead(embed_dim, args.out_dim, args.use_bn_in_head))
+
     # move networks to gpu
     student, teacher = student.cuda(), teacher.cuda()
     # synchronize batch norms (if any)
@@ -168,12 +158,14 @@ def train_dino(args):
     else:
         # teacher_without_ddp and teacher are the same thing
         teacher_without_ddp = teacher
+
     student = nn.parallel.DistributedDataParallel(student, device_ids=[args.gpu])
     # teacher and student start with the same weights
     teacher_without_ddp.load_state_dict(student.module.state_dict())
     # there is no backpropagation through the teacher, so no need for gradients
     for p in teacher.parameters():
         p.requires_grad = False
+
     print(f"Student and Teacher are built: they are both {args.arch} network.")
 
     # ============ preparing loss ... ============
@@ -201,7 +193,6 @@ def train_dino(args):
 
     # ============ init schedulers ... ============
     lr_schedule = dino_utils.cosine_scheduler(args.lr, args.min_lr, args.epochs, 1000, warmup_epochs=args.warmup_epochs)
-
     wd_schedule = dino_utils.cosine_scheduler(args.weight_decay, args.weight_decay_end, args.epochs, 1000)
     
     # momentum parameter is increased to 1. during training with a cosine schedule

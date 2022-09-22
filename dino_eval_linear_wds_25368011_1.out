@@ -1,0 +1,722 @@
+vitl16
+s
+vit_large
+Launced with slurm
+world size, rank, gpu, device count: 1 0 0 1
+| distributed init (rank 0): env://
+git:
+  sha: 53666d24d5181ee40da24c8ce510c22fdfbd27fb, status: has uncommited changes, branch: master
+
+arch: vit_large
+batch_size_per_gpu: 2048
+checkpoint_key: teacher
+dist_url: env://
+epochs: 500
+evaluate: False
+gpu: 0
+local_rank: 0
+lr: 0.0005
+n_train: 2878
+n_val: 2878
+num_labels: 26
+num_workers: 1
+output_dir: /scratch/eo41/dino/evals/labeled_s
+patch_size: 16
+pretrained_weights: /scratch/eo41/dino/models_vitl16/s_5fps_vitl16_checkpoint.pth
+rank: 0
+save_prefix: s_5fps_vitl16
+train_data_path: /scratch/eo41/data/labeled_s/labeled_s_train_000000.tar
+val_data_path: /scratch/eo41/data/labeled_s/labeled_s_val_000000.tar
+val_freq: 1
+world_size: 1
+Take key teacher in provided checkpoint dict
+Pretrained weights found at /scratch/eo41/dino/models_vitl16/s_5fps_vitl16_checkpoint.pth and loaded with msg: _IncompatibleKeys(missing_keys=[], unexpected_keys=['head.mlp.0.weight', 'head.mlp.0.bias', 'head.mlp.2.weight', 'head.mlp.2.bias', 'head.mlp.4.weight', 'head.mlp.4.bias', 'head.last_layer.weight_g', 'head.last_layer.weight_v'])
+Model vit_large built.
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:287: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+Data loaded with train and val imgs.
+2
+Epoch: [0]  [0/2]  eta: 0:00:26  lr: 0.000500  loss: 3.288235 (3.288235)  time: 13.317291  data: 8.151867  max mem: 26098
+Epoch: [0]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 3.162666 (3.225450)  time: 7.656826  data: 4.157585  max mem: 26098
+Epoch: [0] Total time: 0:00:15 (7.736354 s / it)
+Averaged stats: lr: 0.000500  loss: 3.162666 (3.225450)
+Test:  [0/2]  eta: 0:00:26  loss: 3.060251 (3.060251)  acc1: 14.794922 (14.794922)  acc5: 47.509766 (47.509766)  time: 13.051649  data: 8.800997  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 3.056599 (3.058425)  acc1: 13.132530 (14.315497)  acc5: 46.385544 (47.185546)  time: 7.385265  data: 4.400718  max mem: 26099
+Test: Total time: 0:00:14 (7.469811 s / it)
+* Acc@1 14.315 Acc@5 47.186 loss 3.058
+Accuracy at epoch 0 of the network on test images: 14.3%
+Max accuracy so far: 14.32%
+Epoch: [1]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 3.076238 (3.076238)  time: 12.323042  data: 8.057898  max mem: 26099
+Epoch: [1]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.959798 (3.018018)  time: 7.096496  data: 4.105779  max mem: 26099
+Epoch: [1] Total time: 0:00:14 (7.181529 s / it)
+Averaged stats: lr: 0.000500  loss: 2.959798 (3.018018)
+Test:  [0/2]  eta: 0:00:26  loss: 2.877500 (2.877500)  acc1: 22.119141 (22.119141)  acc5: 63.085938 (63.085938)  time: 13.086141  data: 8.817927  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.877500 (2.884330)  acc1: 20.722893 (21.716470)  acc5: 60.843376 (62.439195)  time: 7.402434  data: 4.409146  max mem: 26099
+Test: Total time: 0:00:14 (7.488505 s / it)
+* Acc@1 21.716 Acc@5 62.439 loss 2.884
+Accuracy at epoch 1 of the network on test images: 21.7%
+Max accuracy so far: 21.72%
+Epoch: [2]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.878673 (2.878673)  time: 12.408170  data: 8.140015  max mem: 26099
+Epoch: [2]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.819931 (2.849302)  time: 7.140084  data: 4.147348  max mem: 26099
+Epoch: [2] Total time: 0:00:14 (7.226129 s / it)
+Averaged stats: lr: 0.000500  loss: 2.819931 (2.849302)
+Test:  [0/2]  eta: 0:00:26  loss: 2.737829 (2.737829)  acc1: 27.539062 (27.539062)  acc5: 68.310547 (68.310547)  time: 13.120606  data: 8.858853  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.722383 (2.730106)  acc1: 26.024097 (27.102155)  acc5: 67.590363 (68.102850)  time: 7.419758  data: 4.429646  max mem: 26099
+Test: Total time: 0:00:15 (7.505993 s / it)
+* Acc@1 27.102 Acc@5 68.103 loss 2.730
+Accuracy at epoch 2 of the network on test images: 27.1%
+Max accuracy so far: 27.10%
+Epoch: [3]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.720195 (2.720195)  time: 12.423659  data: 8.159502  max mem: 26099
+Epoch: [3]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.634763 (2.677479)  time: 7.146331  data: 4.155565  max mem: 26099
+Epoch: [3] Total time: 0:00:14 (7.233194 s / it)
+Averaged stats: lr: 0.000500  loss: 2.634763 (2.677479)
+Test:  [0/2]  eta: 0:00:26  loss: 2.617547 (2.617547)  acc1: 31.884766 (31.884766)  acc5: 69.531250 (69.531250)  time: 13.121946  data: 8.861149  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.593654 (2.605601)  acc1: 31.884766 (32.383600)  acc5: 69.531250 (70.118139)  time: 7.420163  data: 4.430759  max mem: 26099
+Test: Total time: 0:00:15 (7.507693 s / it)
+* Acc@1 32.384 Acc@5 70.118 loss 2.606
+Accuracy at epoch 3 of the network on test images: 32.4%
+Max accuracy so far: 32.38%
+Epoch: [4]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.567848 (2.567848)  time: 12.419865  data: 8.151521  max mem: 26099
+Epoch: [4]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.519680 (2.543764)  time: 7.144462  data: 4.151627  max mem: 26099
+Epoch: [4] Total time: 0:00:14 (7.234564 s / it)
+Averaged stats: lr: 0.000500  loss: 2.519680 (2.543764)
+Test:  [0/2]  eta: 0:00:26  loss: 2.512075 (2.512075)  acc1: 34.277344 (34.277344)  acc5: 71.289062 (71.289062)  time: 13.173778  data: 8.917278  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.512075 (2.523843)  acc1: 33.493977 (34.051425)  acc5: 70.722893 (71.125782)  time: 7.446401  data: 4.458886  max mem: 26099
+Test: Total time: 0:00:15 (7.534313 s / it)
+* Acc@1 34.051 Acc@5 71.126 loss 2.524
+Accuracy at epoch 4 of the network on test images: 34.1%
+Max accuracy so far: 34.05%
+Epoch: [5]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.476998 (2.476998)  time: 12.415740  data: 8.158089  max mem: 26099
+Epoch: [5]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.420873 (2.448936)  time: 7.143679  data: 4.156592  max mem: 26099
+Epoch: [5] Total time: 0:00:14 (7.231514 s / it)
+Averaged stats: lr: 0.000500  loss: 2.420873 (2.448936)
+Test:  [0/2]  eta: 0:00:26  loss: 2.393023 (2.393023)  acc1: 37.597656 (37.597656)  acc5: 72.607422 (72.607422)  time: 13.116199  data: 8.860866  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.393023 (2.409646)  acc1: 35.542168 (37.004864)  acc5: 71.807228 (72.376650)  time: 7.416996  data: 4.430616  max mem: 26099
+Test: Total time: 0:00:15 (7.503757 s / it)
+* Acc@1 37.005 Acc@5 72.377 loss 2.410
+Accuracy at epoch 5 of the network on test images: 37.0%
+Max accuracy so far: 37.00%
+Epoch: [6]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.375175 (2.375175)  time: 12.435671  data: 8.182549  max mem: 26099
+Epoch: [6]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.357437 (2.366306)  time: 7.154356  data: 4.168805  max mem: 26099
+Epoch: [6] Total time: 0:00:14 (7.240441 s / it)
+Averaged stats: lr: 0.000500  loss: 2.357437 (2.366306)
+Test:  [0/2]  eta: 0:00:26  loss: 2.321457 (2.321457)  acc1: 37.792969 (37.792969)  acc5: 72.705078 (72.705078)  time: 13.113325  data: 8.859735  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.321457 (2.341529)  acc1: 37.792969 (37.804031)  acc5: 71.807228 (72.446143)  time: 7.416503  data: 4.430084  max mem: 26099
+Test: Total time: 0:00:15 (7.501900 s / it)
+* Acc@1 37.804 Acc@5 72.446 loss 2.342
+Accuracy at epoch 6 of the network on test images: 37.8%
+Max accuracy so far: 37.80%
+Epoch: [7]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.252186 (2.252186)  time: 12.400986  data: 8.147261  max mem: 26099
+Epoch: [7]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.247686 (2.249936)  time: 7.136400  data: 4.150256  max mem: 26099
+Epoch: [7] Total time: 0:00:14 (7.224486 s / it)
+Averaged stats: lr: 0.000500  loss: 2.247686 (2.249936)
+Test:  [0/2]  eta: 0:00:26  loss: 2.201474 (2.201474)  acc1: 42.773438 (42.773438)  acc5: 76.318359 (76.318359)  time: 13.159698  data: 8.889962  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.201474 (2.224589)  acc1: 40.361446 (42.077832)  acc5: 73.614456 (75.538568)  time: 7.439264  data: 4.445195  max mem: 26099
+Test: Total time: 0:00:15 (7.528152 s / it)
+* Acc@1 42.078 Acc@5 75.539 loss 2.225
+Accuracy at epoch 7 of the network on test images: 42.1%
+Max accuracy so far: 42.08%
+Epoch: [8]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.184262 (2.184262)  time: 12.429779  data: 8.162448  max mem: 26099
+Epoch: [8]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.148872 (2.166567)  time: 7.150589  data: 4.158334  max mem: 26099
+Epoch: [8] Total time: 0:00:14 (7.236746 s / it)
+Averaged stats: lr: 0.000500  loss: 2.148872 (2.166567)
+Test:  [0/2]  eta: 0:00:26  loss: 2.144574 (2.144574)  acc1: 41.796875 (41.796875)  acc5: 78.662109 (78.662109)  time: 13.135172  data: 8.875023  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.125254 (2.134914)  acc1: 41.796875 (42.425296)  acc5: 77.469879 (78.318276)  time: 7.427020  data: 4.437728  max mem: 26099
+Test: Total time: 0:00:15 (7.515102 s / it)
+* Acc@1 42.425 Acc@5 78.318 loss 2.135
+Accuracy at epoch 8 of the network on test images: 42.4%
+Max accuracy so far: 42.43%
+Epoch: [9]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.113789 (2.113789)  time: 12.420860  data: 8.152117  max mem: 26099
+Epoch: [9]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 2.057780 (2.085785)  time: 7.146151  data: 4.153353  max mem: 26099
+Epoch: [9] Total time: 0:00:14 (7.234395 s / it)
+Averaged stats: lr: 0.000500  loss: 2.057780 (2.085785)
+Test:  [0/2]  eta: 0:00:26  loss: 2.091461 (2.091461)  acc1: 43.603516 (43.603516)  acc5: 79.101562 (79.101562)  time: 13.104907  data: 8.841185  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.069700 (2.080580)  acc1: 43.603516 (43.849896)  acc5: 79.101562 (79.117444)  time: 7.411807  data: 4.420777  max mem: 26099
+Test: Total time: 0:00:15 (7.500462 s / it)
+* Acc@1 43.850 Acc@5 79.117 loss 2.081
+Accuracy at epoch 9 of the network on test images: 43.8%
+Max accuracy so far: 43.85%
+Epoch: [10]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 2.024074 (2.024074)  time: 12.422291  data: 8.159550  max mem: 26099
+Epoch: [10]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.994929 (2.009501)  time: 7.146842  data: 4.156324  max mem: 26099
+Epoch: [10] Total time: 0:00:14 (7.235844 s / it)
+Averaged stats: lr: 0.000500  loss: 1.994929 (2.009501)
+Test:  [0/2]  eta: 0:00:26  loss: 2.026098 (2.026098)  acc1: 46.289062 (46.289062)  acc5: 80.029297 (80.029297)  time: 13.127834  data: 8.863013  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 2.026098 (2.029117)  acc1: 46.289062 (46.386380)  acc5: 80.029297 (80.298820)  time: 7.423387  data: 4.431730  max mem: 26099
+Test: Total time: 0:00:15 (7.510297 s / it)
+* Acc@1 46.386 Acc@5 80.299 loss 2.029
+Accuracy at epoch 10 of the network on test images: 46.4%
+Max accuracy so far: 46.39%
+Epoch: [11]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.952749 (1.952749)  time: 12.426783  data: 8.168218  max mem: 26099
+Epoch: [11]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.866843 (1.909796)  time: 7.148246  data: 4.160341  max mem: 26099
+Epoch: [11] Total time: 0:00:14 (7.234680 s / it)
+Averaged stats: lr: 0.000500  loss: 1.866843 (1.909796)
+Test:  [0/2]  eta: 0:00:26  loss: 1.951229 (1.951229)  acc1: 48.193359 (48.193359)  acc5: 82.421875 (82.421875)  time: 13.230690  data: 8.964766  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.951229 (1.967407)  acc1: 46.867470 (47.810980)  acc5: 80.963860 (82.001391)  time: 7.475164  data: 4.482593  max mem: 26099
+Test: Total time: 0:00:15 (7.560379 s / it)
+* Acc@1 47.811 Acc@5 82.001 loss 1.967
+Accuracy at epoch 11 of the network on test images: 47.8%
+Max accuracy so far: 47.81%
+Epoch: [12]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.899892 (1.899892)  time: 12.424370  data: 8.152781  max mem: 26099
+Epoch: [12]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.818199 (1.859046)  time: 7.150110  data: 4.155581  max mem: 26099
+Epoch: [12] Total time: 0:00:14 (7.235577 s / it)
+Averaged stats: lr: 0.000500  loss: 1.818199 (1.859046)
+Test:  [0/2]  eta: 0:00:26  loss: 1.903198 (1.903198)  acc1: 49.755859 (49.755859)  acc5: 81.982422 (81.982422)  time: 13.117249  data: 8.853504  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.903198 (1.918479)  acc1: 47.469879 (49.096595)  acc5: 81.807228 (81.931897)  time: 7.417890  data: 4.426963  max mem: 26099
+Test: Total time: 0:00:15 (7.504125 s / it)
+* Acc@1 49.097 Acc@5 81.932 loss 1.918
+Accuracy at epoch 12 of the network on test images: 49.1%
+Max accuracy so far: 49.10%
+Epoch: [13]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.847772 (1.847772)  time: 12.431117  data: 8.168523  max mem: 26099
+Epoch: [13]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.835634 (1.841703)  time: 7.152857  data: 4.161846  max mem: 26099
+Epoch: [13] Total time: 0:00:14 (7.239434 s / it)
+Averaged stats: lr: 0.000500  loss: 1.835634 (1.841703)
+Test:  [0/2]  eta: 0:00:26  loss: 1.840416 (1.840416)  acc1: 52.050781 (52.050781)  acc5: 83.300781 (83.300781)  time: 13.135522  data: 8.868756  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.840416 (1.849989)  acc1: 50.481930 (51.598333)  acc5: 83.300781 (83.425990)  time: 7.427671  data: 4.434565  max mem: 26099
+Test: Total time: 0:00:15 (7.515258 s / it)
+* Acc@1 51.598 Acc@5 83.426 loss 1.850
+Accuracy at epoch 13 of the network on test images: 51.6%
+Max accuracy so far: 51.60%
+Epoch: [14]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.802925 (1.802925)  time: 12.465611  data: 8.205619  max mem: 26099
+Epoch: [14]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.731863 (1.767394)  time: 7.168126  data: 4.179434  max mem: 26099
+Epoch: [14] Total time: 0:00:14 (7.255578 s / it)
+Averaged stats: lr: 0.000500  loss: 1.731863 (1.767394)
+Test:  [0/2]  eta: 0:00:26  loss: 1.811805 (1.811805)  acc1: 52.343750 (52.343750)  acc5: 83.886719 (83.886719)  time: 13.165304  data: 8.895336  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.811805 (1.832273)  acc1: 50.843376 (51.911050)  acc5: 82.650604 (83.530230)  time: 7.442725  data: 4.447879  max mem: 26099
+Test: Total time: 0:00:15 (7.535964 s / it)
+* Acc@1 51.911 Acc@5 83.530 loss 1.832
+Accuracy at epoch 14 of the network on test images: 51.9%
+Max accuracy so far: 51.91%
+Epoch: [15]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.748703 (1.748703)  time: 12.484810  data: 8.218895  max mem: 26099
+Epoch: [15]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.699587 (1.724145)  time: 7.177135  data: 4.185411  max mem: 26099
+Epoch: [15] Total time: 0:00:14 (7.264828 s / it)
+Averaged stats: lr: 0.000500  loss: 1.699587 (1.724145)
+Test:  [0/2]  eta: 0:00:26  loss: 1.781267 (1.781267)  acc1: 52.001953 (52.001953)  acc5: 84.472656 (84.472656)  time: 13.161716  data: 8.903200  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.755445 (1.768356)  acc1: 52.001953 (53.057679)  acc5: 84.472656 (84.711606)  time: 7.440715  data: 4.451781  max mem: 26099
+Test: Total time: 0:00:15 (7.527698 s / it)
+* Acc@1 53.058 Acc@5 84.712 loss 1.768
+Accuracy at epoch 15 of the network on test images: 53.1%
+Max accuracy so far: 53.06%
+Epoch: [16]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.704614 (1.704614)  time: 12.401229  data: 8.144571  max mem: 26099
+Epoch: [16]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.680833 (1.692724)  time: 7.135931  data: 4.149204  max mem: 26099
+Epoch: [16] Total time: 0:00:14 (7.221930 s / it)
+Averaged stats: lr: 0.000500  loss: 1.680833 (1.692724)
+Test:  [0/2]  eta: 0:00:26  loss: 1.752196 (1.752196)  acc1: 54.296875 (54.296875)  acc5: 84.326172 (84.326172)  time: 13.117547  data: 8.859812  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.721947 (1.737071)  acc1: 54.296875 (54.760250)  acc5: 84.326172 (84.364142)  time: 7.418703  data: 4.430114  max mem: 26099
+Test: Total time: 0:00:15 (7.504265 s / it)
+* Acc@1 54.760 Acc@5 84.364 loss 1.737
+Accuracy at epoch 16 of the network on test images: 54.8%
+Max accuracy so far: 54.76%
+Epoch: [17]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.653053 (1.653053)  time: 12.433217  data: 8.178382  max mem: 26099
+Epoch: [17]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.628330 (1.640691)  time: 7.152065  data: 4.165609  max mem: 26099
+Epoch: [17] Total time: 0:00:14 (7.237834 s / it)
+Averaged stats: lr: 0.000500  loss: 1.628330 (1.640691)
+Test:  [0/2]  eta: 0:00:26  loss: 1.763666 (1.763666)  acc1: 51.513672 (51.513672)  acc5: 84.375000 (84.375000)  time: 13.112771  data: 8.859778  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.730278 (1.746972)  acc1: 51.513672 (52.223767)  acc5: 84.375000 (84.815845)  time: 7.415776  data: 4.430107  max mem: 26099
+Test: Total time: 0:00:15 (7.501749 s / it)
+* Acc@1 52.224 Acc@5 84.816 loss 1.747
+Accuracy at epoch 17 of the network on test images: 52.2%
+Max accuracy so far: 54.76%
+Epoch: [18]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.616746 (1.616746)  time: 12.389795  data: 8.131535  max mem: 26099
+Epoch: [18]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.613084 (1.614915)  time: 7.130030  data: 4.142397  max mem: 26099
+Epoch: [18] Total time: 0:00:14 (7.216046 s / it)
+Averaged stats: lr: 0.000500  loss: 1.613084 (1.614915)
+Test:  [0/2]  eta: 0:00:26  loss: 1.687128 (1.687128)  acc1: 54.492188 (54.492188)  acc5: 84.667969 (84.667969)  time: 13.077982  data: 8.822058  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.649180 (1.668154)  acc1: 54.492188 (55.211953)  acc5: 84.667969 (85.059070)  time: 7.398610  data: 4.411210  max mem: 26099
+Test: Total time: 0:00:14 (7.485339 s / it)
+* Acc@1 55.212 Acc@5 85.059 loss 1.668
+Accuracy at epoch 18 of the network on test images: 55.2%
+Max accuracy so far: 55.21%
+Epoch: [19]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.622202 (1.622202)  time: 12.416482  data: 8.154543  max mem: 26099
+Epoch: [19]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.565904 (1.594053)  time: 7.143534  data: 4.153601  max mem: 26099
+Epoch: [19] Total time: 0:00:14 (7.230274 s / it)
+Averaged stats: lr: 0.000500  loss: 1.565904 (1.594053)
+Test:  [0/2]  eta: 0:00:26  loss: 1.703777 (1.703777)  acc1: 53.808594 (53.808594)  acc5: 84.277344 (84.277344)  time: 13.124397  data: 8.868080  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.672204 (1.687990)  acc1: 53.808594 (54.273802)  acc5: 84.277344 (84.711606)  time: 7.421537  data: 4.434258  max mem: 26099
+Test: Total time: 0:00:15 (7.509340 s / it)
+* Acc@1 54.274 Acc@5 84.712 loss 1.688
+Accuracy at epoch 19 of the network on test images: 54.3%
+Max accuracy so far: 55.21%
+Epoch: [20]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.580476 (1.580476)  time: 12.423195  data: 8.168306  max mem: 26099
+Epoch: [20]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.528201 (1.554339)  time: 7.146747  data: 4.160801  max mem: 26099
+Epoch: [20] Total time: 0:00:14 (7.235461 s / it)
+Averaged stats: lr: 0.000500  loss: 1.528201 (1.554339)
+Test:  [0/2]  eta: 0:00:26  loss: 1.676815 (1.676815)  acc1: 54.541016 (54.541016)  acc5: 85.693359 (85.693359)  time: 13.180733  data: 8.914795  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.663676 (1.670246)  acc1: 53.493977 (54.239055)  acc5: 85.693359 (85.962475)  time: 7.450531  data: 4.457611  max mem: 26099
+Test: Total time: 0:00:15 (7.538974 s / it)
+* Acc@1 54.239 Acc@5 85.962 loss 1.670
+Accuracy at epoch 20 of the network on test images: 54.2%
+Max accuracy so far: 55.21%
+Epoch: [21]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.519359 (1.519359)  time: 12.457312  data: 8.193621  max mem: 26099
+Epoch: [21]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.519359 (1.546026)  time: 7.168358  data: 4.178026  max mem: 26099
+Epoch: [21] Total time: 0:00:14 (7.254801 s / it)
+Averaged stats: lr: 0.000500  loss: 1.519359 (1.546026)
+Test:  [0/2]  eta: 0:00:26  loss: 1.651049 (1.651049)  acc1: 54.492188 (54.492188)  acc5: 85.107422 (85.107422)  time: 13.198059  data: 8.943399  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.651049 (1.654983)  acc1: 54.492188 (54.517026)  acc5: 84.578316 (84.954830)  time: 7.458579  data: 4.471932  max mem: 26099
+Test: Total time: 0:00:15 (7.545338 s / it)
+* Acc@1 54.517 Acc@5 84.955 loss 1.655
+Accuracy at epoch 21 of the network on test images: 54.5%
+Max accuracy so far: 55.21%
+Epoch: [22]  [0/2]  eta: 0:00:25  lr: 0.000500  loss: 1.480355 (1.480355)  time: 12.531815  data: 8.269403  max mem: 26099
+Epoch: [22]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.480355 (1.486999)  time: 7.201995  data: 4.212171  max mem: 26099
+Epoch: [22] Total time: 0:00:14 (7.286936 s / it)
+Averaged stats: lr: 0.000500  loss: 1.480355 (1.486999)
+Test:  [0/2]  eta: 0:00:26  loss: 1.645460 (1.645460)  acc1: 54.785156 (54.785156)  acc5: 86.328125 (86.328125)  time: 13.117110  data: 8.854675  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.615390 (1.630425)  acc1: 54.698795 (54.760250)  acc5: 86.328125 (86.518416)  time: 7.417820  data: 4.427556  max mem: 26099
+Test: Total time: 0:00:15 (7.507235 s / it)
+* Acc@1 54.760 Acc@5 86.518 loss 1.630
+Accuracy at epoch 22 of the network on test images: 54.8%
+Max accuracy so far: 55.21%
+Epoch: [23]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.460721 (1.460721)  time: 12.363791  data: 8.099369  max mem: 26099
+Epoch: [23]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.460721 (1.475612)  time: 7.118063  data: 4.126888  max mem: 26099
+Epoch: [23] Total time: 0:00:14 (7.210147 s / it)
+Averaged stats: lr: 0.000500  loss: 1.460721 (1.475612)
+Test:  [0/2]  eta: 0:00:26  loss: 1.596787 (1.596787)  acc1: 55.615234 (55.615234)  acc5: 86.621094 (86.621094)  time: 13.109929  data: 8.851027  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.596787 (1.613866)  acc1: 55.615234 (55.698402)  acc5: 85.542168 (86.309937)  time: 7.413983  data: 4.425735  max mem: 26099
+Test: Total time: 0:00:15 (7.500093 s / it)
+* Acc@1 55.698 Acc@5 86.310 loss 1.614
+Accuracy at epoch 23 of the network on test images: 55.7%
+Max accuracy so far: 55.70%
+Epoch: [24]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.460633 (1.460633)  time: 12.384391  data: 8.120792  max mem: 26099
+Epoch: [24]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.448937 (1.454785)  time: 7.127929  data: 4.137310  max mem: 26099
+Epoch: [24] Total time: 0:00:14 (7.214918 s / it)
+Averaged stats: lr: 0.000500  loss: 1.448937 (1.454785)
+Test:  [0/2]  eta: 0:00:26  loss: 1.581276 (1.581276)  acc1: 55.175781 (55.175781)  acc5: 86.962891 (86.962891)  time: 13.144447  data: 8.879511  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.581276 (1.591091)  acc1: 54.939758 (55.107713)  acc5: 86.746986 (86.900625)  time: 7.431076  data: 4.439939  max mem: 26099
+Test: Total time: 0:00:15 (7.518391 s / it)
+* Acc@1 55.108 Acc@5 86.901 loss 1.591
+Accuracy at epoch 24 of the network on test images: 55.1%
+Max accuracy so far: 55.70%
+Epoch: [25]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.438141 (1.438141)  time: 12.390133  data: 8.123252  max mem: 26099
+Epoch: [25]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.438141 (1.463989)  time: 7.130315  data: 4.138266  max mem: 26099
+Epoch: [25] Total time: 0:00:14 (7.218741 s / it)
+Averaged stats: lr: 0.000500  loss: 1.438141 (1.463989)
+Test:  [0/2]  eta: 0:00:26  loss: 1.610479 (1.610479)  acc1: 53.759766 (53.759766)  acc5: 85.546875 (85.546875)  time: 13.177492  data: 8.917554  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.599127 (1.604803)  acc1: 53.759766 (54.030577)  acc5: 85.546875 (85.962474)  time: 7.447810  data: 4.458963  max mem: 26099
+Test: Total time: 0:00:15 (7.536106 s / it)
+* Acc@1 54.031 Acc@5 85.962 loss 1.605
+Accuracy at epoch 25 of the network on test images: 54.0%
+Max accuracy so far: 55.70%
+Epoch: [26]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.406902 (1.406902)  time: 12.420641  data: 8.163558  max mem: 26099
+Epoch: [26]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.406902 (1.434432)  time: 7.150585  data: 4.163182  max mem: 26099
+Epoch: [26] Total time: 0:00:14 (7.238173 s / it)
+Averaged stats: lr: 0.000500  loss: 1.406902 (1.434432)
+Test:  [0/2]  eta: 0:00:26  loss: 1.516085 (1.516085)  acc1: 56.738281 (56.738281)  acc5: 87.353516 (87.353516)  time: 13.106722  data: 8.849029  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.516085 (1.582755)  acc1: 52.289158 (55.455178)  acc5: 86.265060 (87.039611)  time: 7.412606  data: 4.424736  max mem: 26099
+Test: Total time: 0:00:14 (7.498945 s / it)
+* Acc@1 55.455 Acc@5 87.040 loss 1.583
+Accuracy at epoch 26 of the network on test images: 55.5%
+Max accuracy so far: 55.70%
+Epoch: [27]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.393194 (1.393194)  time: 12.333008  data: 8.068369  max mem: 26099
+Epoch: [27]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.367046 (1.380120)  time: 7.102127  data: 4.111263  max mem: 26099
+Epoch: [27] Total time: 0:00:14 (7.187993 s / it)
+Averaged stats: lr: 0.000500  loss: 1.367046 (1.380120)
+Test:  [0/2]  eta: 0:00:26  loss: 1.546368 (1.546368)  acc1: 56.005859 (56.005859)  acc5: 87.451172 (87.451172)  time: 13.134289  data: 8.871717  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.546368 (1.579801)  acc1: 52.289158 (54.933982)  acc5: 86.265060 (87.109104)  time: 7.426255  data: 4.436065  max mem: 26099
+Test: Total time: 0:00:15 (7.512112 s / it)
+* Acc@1 54.934 Acc@5 87.109 loss 1.580
+Accuracy at epoch 27 of the network on test images: 54.9%
+Max accuracy so far: 55.70%
+Epoch: [28]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.325988 (1.325988)  time: 12.393695  data: 8.130764  max mem: 26099
+Epoch: [28]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.325988 (1.350938)  time: 7.132719  data: 4.142602  max mem: 26099
+Epoch: [28] Total time: 0:00:14 (7.218297 s / it)
+Averaged stats: lr: 0.000500  loss: 1.325988 (1.350938)
+Test:  [0/2]  eta: 0:00:26  loss: 1.544852 (1.544852)  acc1: 56.933594 (56.933594)  acc5: 86.669922 (86.669922)  time: 13.134704  data: 8.867569  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.505771 (1.525312)  acc1: 56.933594 (57.157749)  acc5: 86.669922 (86.935372)  time: 7.426611  data: 4.433965  max mem: 26099
+Test: Total time: 0:00:15 (7.512522 s / it)
+* Acc@1 57.158 Acc@5 86.935 loss 1.525
+Accuracy at epoch 28 of the network on test images: 57.2%
+Max accuracy so far: 57.16%
+Epoch: [29]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.340095 (1.340095)  time: 12.323235  data: 8.069581  max mem: 26099
+Epoch: [29]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.340095 (1.347029)  time: 7.096968  data: 4.111213  max mem: 26099
+Epoch: [29] Total time: 0:00:14 (7.182728 s / it)
+Averaged stats: lr: 0.000500  loss: 1.340095 (1.347029)
+Test:  [0/2]  eta: 0:00:26  loss: 1.502098 (1.502098)  acc1: 56.982422 (56.982422)  acc5: 88.134766 (88.134766)  time: 13.137665  data: 8.867797  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.467779 (1.484939)  acc1: 55.180725 (56.462822)  acc5: 88.134766 (88.672689)  time: 7.427992  data: 4.434094  max mem: 26099
+Test: Total time: 0:00:15 (7.515370 s / it)
+* Acc@1 56.463 Acc@5 88.673 loss 1.485
+Accuracy at epoch 29 of the network on test images: 56.5%
+Max accuracy so far: 57.16%
+Epoch: [30]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.334183 (1.334183)  time: 12.423152  data: 8.155594  max mem: 26099
+Epoch: [30]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.334183 (1.344156)  time: 7.147105  data: 4.154323  max mem: 26099
+Epoch: [30] Total time: 0:00:14 (7.237107 s / it)
+Averaged stats: lr: 0.000500  loss: 1.334183 (1.344156)
+Test:  [0/2]  eta: 0:00:26  loss: 1.492193 (1.492193)  acc1: 57.177734 (57.177734)  acc5: 88.476562 (88.476562)  time: 13.192096  data: 8.931675  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.492193 (1.514562)  acc1: 57.177734 (57.261987)  acc5: 87.228920 (88.116749)  time: 7.455729  data: 4.466027  max mem: 26099
+Test: Total time: 0:00:15 (7.543915 s / it)
+* Acc@1 57.262 Acc@5 88.117 loss 1.515
+Accuracy at epoch 30 of the network on test images: 57.3%
+Max accuracy so far: 57.26%
+Epoch: [31]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.328284 (1.328284)  time: 12.475493  data: 8.218235  max mem: 26099
+Epoch: [31]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.328284 (1.336210)  time: 7.173680  data: 4.186515  max mem: 26099
+Epoch: [31] Total time: 0:00:14 (7.261286 s / it)
+Averaged stats: lr: 0.000500  loss: 1.328284 (1.336210)
+Test:  [0/2]  eta: 0:00:26  loss: 1.555331 (1.555331)  acc1: 55.322266 (55.322266)  acc5: 86.474609 (86.474609)  time: 13.056553  data: 8.797409  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.443351 (1.499341)  acc1: 55.322266 (56.080612)  acc5: 86.474609 (87.421822)  time: 7.388605  data: 4.398887  max mem: 26099
+Test: Total time: 0:00:14 (7.475069 s / it)
+* Acc@1 56.081 Acc@5 87.422 loss 1.499
+Accuracy at epoch 31 of the network on test images: 56.1%
+Max accuracy so far: 57.26%
+Epoch: [32]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.296987 (1.296987)  time: 12.404404  data: 8.140117  max mem: 26099
+Epoch: [32]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.296987 (1.302456)  time: 7.138698  data: 4.147990  max mem: 26099
+Epoch: [32] Total time: 0:00:14 (7.223507 s / it)
+Averaged stats: lr: 0.000500  loss: 1.296987 (1.302456)
+Test:  [0/2]  eta: 0:00:26  loss: 1.471941 (1.471941)  acc1: 59.082031 (59.082031)  acc5: 88.281250 (88.281250)  time: 13.126800  data: 8.867302  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.471941 (1.490782)  acc1: 56.024097 (58.200139)  acc5: 88.281250 (88.359974)  time: 7.423541  data: 4.433858  max mem: 26099
+Test: Total time: 0:00:15 (7.509544 s / it)
+* Acc@1 58.200 Acc@5 88.360 loss 1.491
+Accuracy at epoch 32 of the network on test images: 58.2%
+Max accuracy so far: 58.20%
+Epoch: [33]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.293703 (1.293703)  time: 12.400398  data: 8.136231  max mem: 26099
+Epoch: [33]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.293703 (1.294881)  time: 7.135962  data: 4.145213  max mem: 26099
+Epoch: [33] Total time: 0:00:14 (7.222400 s / it)
+Averaged stats: lr: 0.000500  loss: 1.293703 (1.294881)
+Test:  [0/2]  eta: 0:00:26  loss: 1.495854 (1.495854)  acc1: 57.373047 (57.373047)  acc5: 88.232422 (88.232422)  time: 13.112984  data: 8.855522  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.468003 (1.481928)  acc1: 57.373047 (57.748437)  acc5: 88.232422 (88.255734)  time: 7.416054  data: 4.427979  max mem: 26099
+Test: Total time: 0:00:15 (7.502287 s / it)
+* Acc@1 57.748 Acc@5 88.256 loss 1.482
+Accuracy at epoch 33 of the network on test images: 57.7%
+Max accuracy so far: 58.20%
+Epoch: [34]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.259707 (1.259707)  time: 12.433130  data: 8.174191  max mem: 26099
+Epoch: [34]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.259707 (1.273154)  time: 7.151350  data: 4.162881  max mem: 26099
+Epoch: [34] Total time: 0:00:14 (7.238421 s / it)
+Averaged stats: lr: 0.000500  loss: 1.259707 (1.273154)
+Test:  [0/2]  eta: 0:00:26  loss: 1.469958 (1.469958)  acc1: 57.421875 (57.421875)  acc5: 88.623047 (88.623047)  time: 13.088780  data: 8.829712  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.469958 (1.478327)  acc1: 56.144581 (57.053510)  acc5: 88.554222 (88.603198)  time: 7.404042  data: 4.415053  max mem: 26099
+Test: Total time: 0:00:14 (7.490471 s / it)
+* Acc@1 57.054 Acc@5 88.603 loss 1.478
+Accuracy at epoch 34 of the network on test images: 57.1%
+Max accuracy so far: 58.20%
+Epoch: [35]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.285042 (1.285042)  time: 12.433920  data: 8.174632  max mem: 26099
+Epoch: [35]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.223483 (1.254263)  time: 7.152622  data: 4.164566  max mem: 26099
+Epoch: [35] Total time: 0:00:14 (7.241044 s / it)
+Averaged stats: lr: 0.000500  loss: 1.223483 (1.254263)
+Test:  [0/2]  eta: 0:00:26  loss: 1.469272 (1.469272)  acc1: 57.373047 (57.373047)  acc5: 88.330078 (88.330078)  time: 13.121836  data: 8.865687  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.399628 (1.434450)  acc1: 57.373047 (58.200140)  acc5: 88.330078 (88.568452)  time: 7.420834  data: 4.433064  max mem: 26099
+Test: Total time: 0:00:15 (7.508665 s / it)
+* Acc@1 58.200 Acc@5 88.568 loss 1.434
+Accuracy at epoch 35 of the network on test images: 58.2%
+Max accuracy so far: 58.20%
+Epoch: [36]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.216906 (1.216906)  time: 12.472020  data: 8.218031  max mem: 26099
+Epoch: [36]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.216906 (1.229971)  time: 7.170136  data: 4.184888  max mem: 26099
+Epoch: [36] Total time: 0:00:14 (7.258836 s / it)
+Averaged stats: lr: 0.000500  loss: 1.216906 (1.229971)
+Test:  [0/2]  eta: 0:00:26  loss: 1.421561 (1.421561)  acc1: 58.447266 (58.447266)  acc5: 89.208984 (89.208984)  time: 13.146399  data: 8.885684  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.421561 (1.432856)  acc1: 58.447266 (58.478110)  acc5: 88.795181 (89.089646)  time: 7.433382  data: 4.443059  max mem: 26099
+Test: Total time: 0:00:15 (7.520035 s / it)
+* Acc@1 58.478 Acc@5 89.090 loss 1.433
+Accuracy at epoch 36 of the network on test images: 58.5%
+Max accuracy so far: 58.48%
+Epoch: [37]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.239451 (1.239451)  time: 12.394644  data: 8.128907  max mem: 26099
+Epoch: [37]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.239451 (1.239863)  time: 7.132915  data: 4.141248  max mem: 26099
+Epoch: [37] Total time: 0:00:14 (7.218982 s / it)
+Averaged stats: lr: 0.000500  loss: 1.239451 (1.239863)
+Test:  [0/2]  eta: 0:00:26  loss: 1.511019 (1.511019)  acc1: 56.005859 (56.005859)  acc5: 86.621094 (86.621094)  time: 13.110918  data: 8.841163  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.468204 (1.489611)  acc1: 56.005859 (56.219598)  acc5: 86.621094 (86.865879)  time: 7.415115  data: 4.420801  max mem: 26099
+Test: Total time: 0:00:15 (7.500634 s / it)
+* Acc@1 56.220 Acc@5 86.866 loss 1.490
+Accuracy at epoch 37 of the network on test images: 56.2%
+Max accuracy so far: 58.48%
+Epoch: [38]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.211819 (1.211819)  time: 12.363788  data: 8.110249  max mem: 26099
+Epoch: [38]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.211819 (1.257136)  time: 7.116554  data: 4.130795  max mem: 26099
+Epoch: [38] Total time: 0:00:14 (7.206344 s / it)
+Averaged stats: lr: 0.000500  loss: 1.211819 (1.257136)
+Test:  [0/2]  eta: 0:00:26  loss: 1.446619 (1.446619)  acc1: 57.324219 (57.324219)  acc5: 88.916016 (88.916016)  time: 13.123742  data: 8.855345  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.446619 (1.470328)  acc1: 56.024097 (56.949271)  acc5: 88.433739 (88.776930)  time: 7.422115  data: 4.427850  max mem: 26099
+Test: Total time: 0:00:15 (7.508066 s / it)
+* Acc@1 56.949 Acc@5 88.777 loss 1.470
+Accuracy at epoch 38 of the network on test images: 56.9%
+Max accuracy so far: 58.48%
+Epoch: [39]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.248590 (1.248590)  time: 12.345508  data: 8.086592  max mem: 26099
+Epoch: [39]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.215239 (1.231915)  time: 7.107427  data: 4.119287  max mem: 26099
+Epoch: [39] Total time: 0:00:14 (7.192917 s / it)
+Averaged stats: lr: 0.000500  loss: 1.215239 (1.231915)
+Test:  [0/2]  eta: 0:00:26  loss: 1.427739 (1.427739)  acc1: 58.300781 (58.300781)  acc5: 88.769531 (88.769531)  time: 13.194633  data: 8.922607  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.427739 (1.441897)  acc1: 56.385544 (57.748437)  acc5: 88.769531 (88.811675)  time: 7.456358  data: 4.461597  max mem: 26099
+Test: Total time: 0:00:15 (7.542810 s / it)
+* Acc@1 57.748 Acc@5 88.812 loss 1.442
+Accuracy at epoch 39 of the network on test images: 57.7%
+Max accuracy so far: 58.48%
+Epoch: [40]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.223194 (1.223194)  time: 12.410367  data: 8.147454  max mem: 26099
+Epoch: [40]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.178684 (1.200939)  time: 7.141048  data: 4.150222  max mem: 26099
+Epoch: [40] Total time: 0:00:14 (7.228402 s / it)
+Averaged stats: lr: 0.000500  loss: 1.178684 (1.200939)
+Test:  [0/2]  eta: 0:00:26  loss: 1.411127 (1.411127)  acc1: 58.984375 (58.984375)  acc5: 89.111328 (89.111328)  time: 13.140368  data: 8.875700  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.411127 (1.430322)  acc1: 56.867470 (58.373871)  acc5: 89.111328 (89.124393)  time: 7.430014  data: 4.438066  max mem: 26099
+Test: Total time: 0:00:15 (7.521585 s / it)
+* Acc@1 58.374 Acc@5 89.124 loss 1.430
+Accuracy at epoch 40 of the network on test images: 58.4%
+Max accuracy so far: 58.48%
+Epoch: [41]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.163551 (1.163551)  time: 12.474543  data: 8.211646  max mem: 26099
+Epoch: [41]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.163551 (1.165906)  time: 7.172113  data: 4.181628  max mem: 26099
+Epoch: [41] Total time: 0:00:14 (7.260534 s / it)
+Averaged stats: lr: 0.000500  loss: 1.163551 (1.165906)
+Test:  [0/2]  eta: 0:00:26  loss: 1.443467 (1.443467)  acc1: 58.496094 (58.496094)  acc5: 88.769531 (88.769531)  time: 13.154213  data: 8.900935  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.417064 (1.430265)  acc1: 58.433735 (58.478110)  acc5: 87.951813 (88.533706)  time: 7.436715  data: 4.450680  max mem: 26099
+Test: Total time: 0:00:15 (7.525224 s / it)
+* Acc@1 58.478 Acc@5 88.534 loss 1.430
+Accuracy at epoch 41 of the network on test images: 58.5%
+Max accuracy so far: 58.48%
+Epoch: [42]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.200898 (1.200898)  time: 12.409419  data: 8.151860  max mem: 26099
+Epoch: [42]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.200898 (1.209236)  time: 7.146438  data: 4.158235  max mem: 26099
+Epoch: [42] Total time: 0:00:14 (7.232694 s / it)
+Averaged stats: lr: 0.000500  loss: 1.200898 (1.209236)
+Test:  [0/2]  eta: 0:00:26  loss: 1.466816 (1.466816)  acc1: 56.982422 (56.982422)  acc5: 88.769531 (88.769531)  time: 13.125491  data: 8.865163  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.466816 (1.488309)  acc1: 54.578316 (56.289090)  acc5: 87.108437 (88.290480)  time: 7.422432  data: 4.432791  max mem: 26099
+Test: Total time: 0:00:15 (7.509057 s / it)
+* Acc@1 56.289 Acc@5 88.290 loss 1.488
+Accuracy at epoch 42 of the network on test images: 56.3%
+Max accuracy so far: 58.48%
+Epoch: [43]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.221462 (1.221462)  time: 12.383908  data: 8.131996  max mem: 26099
+Epoch: [43]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.183409 (1.202435)  time: 7.127608  data: 4.142983  max mem: 26099
+Epoch: [43] Total time: 0:00:14 (7.213607 s / it)
+Averaged stats: lr: 0.000500  loss: 1.183409 (1.202435)
+Test:  [0/2]  eta: 0:00:26  loss: 1.411268 (1.411268)  acc1: 58.349609 (58.349609)  acc5: 89.062500 (89.062500)  time: 13.133691  data: 8.879291  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.364472 (1.387870)  acc1: 58.349609 (58.929813)  acc5: 89.062500 (89.159138)  time: 7.425872  data: 4.439829  max mem: 26099
+Test: Total time: 0:00:15 (7.512468 s / it)
+* Acc@1 58.930 Acc@5 89.159 loss 1.388
+Accuracy at epoch 43 of the network on test images: 58.9%
+Max accuracy so far: 58.93%
+Epoch: [44]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.213788 (1.213788)  time: 12.349071  data: 8.088952  max mem: 26099
+Epoch: [44]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.156257 (1.185022)  time: 7.108330  data: 4.120208  max mem: 26099
+Epoch: [44] Total time: 0:00:14 (7.195232 s / it)
+Averaged stats: lr: 0.000500  loss: 1.156257 (1.185022)
+Test:  [0/2]  eta: 0:00:26  loss: 1.409727 (1.409727)  acc1: 58.837891 (58.837891)  acc5: 89.404297 (89.404297)  time: 13.133186  data: 8.876042  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.409727 (1.411310)  acc1: 57.831326 (58.547603)  acc5: 89.404297 (89.506603)  time: 7.425682  data: 4.438221  max mem: 26099
+Test: Total time: 0:00:15 (7.512464 s / it)
+* Acc@1 58.548 Acc@5 89.507 loss 1.411
+Accuracy at epoch 44 of the network on test images: 58.5%
+Max accuracy so far: 58.93%
+Epoch: [45]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.174192 (1.174192)  time: 12.357003  data: 8.097664  max mem: 26099
+Epoch: [45]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.094637 (1.134415)  time: 7.114648  data: 4.126362  max mem: 26099
+Epoch: [45] Total time: 0:00:14 (7.202665 s / it)
+Averaged stats: lr: 0.000500  loss: 1.094637 (1.134415)
+Test:  [0/2]  eta: 0:00:26  loss: 1.402698 (1.402698)  acc1: 59.765625 (59.765625)  acc5: 89.111328 (89.111328)  time: 13.172024  data: 8.919643  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.402698 (1.440257)  acc1: 56.746990 (58.895067)  acc5: 88.674698 (88.985406)  time: 7.445179  data: 4.460002  max mem: 26099
+Test: Total time: 0:00:15 (7.533692 s / it)
+* Acc@1 58.895 Acc@5 88.985 loss 1.440
+Accuracy at epoch 45 of the network on test images: 58.9%
+Max accuracy so far: 58.93%
+Epoch: [46]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.163296 (1.163296)  time: 12.359342  data: 8.102355  max mem: 26099
+Epoch: [46]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.096440 (1.129868)  time: 7.115932  data: 4.128139  max mem: 26099
+Epoch: [46] Total time: 0:00:14 (7.204197 s / it)
+Averaged stats: lr: 0.000500  loss: 1.096440 (1.129868)
+Test:  [0/2]  eta: 0:00:26  loss: 1.413109 (1.413109)  acc1: 58.740234 (58.740234)  acc5: 88.671875 (88.671875)  time: 13.145119  data: 8.893774  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.401815 (1.407462)  acc1: 58.740234 (58.825573)  acc5: 88.671875 (89.054899)  time: 7.432097  data: 4.447111  max mem: 26099
+Test: Total time: 0:00:15 (7.518650 s / it)
+* Acc@1 58.826 Acc@5 89.055 loss 1.407
+Accuracy at epoch 46 of the network on test images: 58.8%
+Max accuracy so far: 58.93%
+Epoch: [47]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.192896 (1.192896)  time: 12.366062  data: 8.106983  max mem: 26099
+Epoch: [47]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.192896 (1.198659)  time: 7.119932  data: 4.131411  max mem: 26099
+Epoch: [47] Total time: 0:00:14 (7.206562 s / it)
+Averaged stats: lr: 0.000500  loss: 1.192896 (1.198659)
+Test:  [0/2]  eta: 0:00:26  loss: 1.363190 (1.363190)  acc1: 60.546875 (60.546875)  acc5: 89.648438 (89.648438)  time: 13.120934  data: 8.861145  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.363190 (1.395301)  acc1: 57.108437 (59.555248)  acc5: 88.795181 (89.402363)  time: 7.419879  data: 4.430786  max mem: 26099
+Test: Total time: 0:00:15 (7.505124 s / it)
+* Acc@1 59.555 Acc@5 89.402 loss 1.395
+Accuracy at epoch 47 of the network on test images: 59.6%
+Max accuracy so far: 59.56%
+Epoch: [48]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.149152 (1.149152)  time: 12.346846  data: 8.082790  max mem: 26099
+Epoch: [48]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.127064 (1.138108)  time: 7.108726  data: 4.117689  max mem: 26099
+Epoch: [48] Total time: 0:00:14 (7.194274 s / it)
+Averaged stats: lr: 0.000500  loss: 1.127064 (1.138108)
+Test:  [0/2]  eta: 0:00:26  loss: 1.417419 (1.417419)  acc1: 57.812500 (57.812500)  acc5: 89.111328 (89.111328)  time: 13.150339  data: 8.886187  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.417419 (1.432557)  acc1: 56.144581 (57.331481)  acc5: 88.192772 (88.846421)  time: 7.435065  data: 4.443315  max mem: 26099
+Test: Total time: 0:00:15 (7.521621 s / it)
+* Acc@1 57.331 Acc@5 88.846 loss 1.433
+Accuracy at epoch 48 of the network on test images: 57.3%
+Max accuracy so far: 59.56%
+Epoch: [49]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.131423 (1.131423)  time: 12.383954  data: 8.117945  max mem: 26099
+Epoch: [49]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.131423 (1.134275)  time: 7.127002  data: 4.135370  max mem: 26099
+Epoch: [49] Total time: 0:00:14 (7.212773 s / it)
+Averaged stats: lr: 0.000500  loss: 1.131423 (1.134275)
+Test:  [0/2]  eta: 0:00:26  loss: 1.419666 (1.419666)  acc1: 57.910156 (57.910156)  acc5: 88.671875 (88.671875)  time: 13.104965  data: 8.840506  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.350984 (1.385325)  acc1: 57.910156 (59.346769)  acc5: 88.671875 (88.776929)  time: 7.412637  data: 4.420454  max mem: 26099
+Test: Total time: 0:00:14 (7.499794 s / it)
+* Acc@1 59.347 Acc@5 88.777 loss 1.385
+Accuracy at epoch 49 of the network on test images: 59.3%
+Max accuracy so far: 59.56%
+Epoch: [50]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.134831 (1.134831)  time: 12.444964  data: 8.185604  max mem: 26099
+Epoch: [50]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.122536 (1.128684)  time: 7.161470  data: 4.173429  max mem: 26099
+Epoch: [50] Total time: 0:00:14 (7.248553 s / it)
+Averaged stats: lr: 0.000500  loss: 1.122536 (1.128684)
+Test:  [0/2]  eta: 0:00:26  loss: 1.410605 (1.410605)  acc1: 58.789062 (58.789062)  acc5: 88.671875 (88.671875)  time: 13.140864  data: 8.883050  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.410605 (1.449011)  acc1: 57.228916 (58.339125)  acc5: 87.349396 (88.290479)  time: 7.429654  data: 4.441710  max mem: 26099
+Test: Total time: 0:00:15 (7.517739 s / it)
+* Acc@1 58.339 Acc@5 88.290 loss 1.449
+Accuracy at epoch 50 of the network on test images: 58.3%
+Max accuracy so far: 59.56%
+Epoch: [51]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.080284 (1.080284)  time: 12.430827  data: 8.176378  max mem: 26099
+Epoch: [51]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.080284 (1.093731)  time: 7.150740  data: 4.164787  max mem: 26099
+Epoch: [51] Total time: 0:00:14 (7.239718 s / it)
+Averaged stats: lr: 0.000500  loss: 1.080284 (1.093731)
+Test:  [0/2]  eta: 0:00:26  loss: 1.441825 (1.441825)  acc1: 57.373047 (57.373047)  acc5: 88.574219 (88.574219)  time: 13.115774  data: 8.861247  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.422422 (1.432123)  acc1: 57.373047 (57.922169)  acc5: 88.192772 (88.464211)  time: 7.416931  data: 4.430806  max mem: 26099
+Test: Total time: 0:00:15 (7.504495 s / it)
+* Acc@1 57.922 Acc@5 88.464 loss 1.432
+Accuracy at epoch 51 of the network on test images: 57.9%
+Max accuracy so far: 59.56%
+Epoch: [52]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.085449 (1.085449)  time: 12.461941  data: 8.203987  max mem: 26099
+Epoch: [52]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.077099 (1.081274)  time: 7.171954  data: 4.183221  max mem: 26099
+Epoch: [52] Total time: 0:00:14 (7.259310 s / it)
+Averaged stats: lr: 0.000500  loss: 1.077099 (1.081274)
+Test:  [0/2]  eta: 0:00:26  loss: 1.422824 (1.422824)  acc1: 58.447266 (58.447266)  acc5: 89.111328 (89.111328)  time: 13.126050  data: 8.855945  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.406427 (1.414626)  acc1: 58.447266 (58.617095)  acc5: 88.313255 (88.881168)  time: 7.421563  data: 4.428185  max mem: 26099
+Test: Total time: 0:00:15 (7.507105 s / it)
+* Acc@1 58.617 Acc@5 88.881 loss 1.415
+Accuracy at epoch 52 of the network on test images: 58.6%
+Max accuracy so far: 59.56%
+Epoch: [53]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.070517 (1.070517)  time: 12.441372  data: 8.176240  max mem: 26099
+Epoch: [53]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.070517 (1.088925)  time: 7.156203  data: 4.164824  max mem: 26099
+Epoch: [53] Total time: 0:00:14 (7.242576 s / it)
+Averaged stats: lr: 0.000500  loss: 1.070517 (1.088925)
+Test:  [0/2]  eta: 0:00:26  loss: 1.393537 (1.393537)  acc1: 61.035156 (61.035156)  acc5: 89.160156 (89.160156)  time: 13.152441  data: 8.891949  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.380573 (1.387055)  acc1: 57.710846 (60.076443)  acc5: 89.160156 (89.367616)  time: 7.435599  data: 4.446157  max mem: 26099
+Test: Total time: 0:00:15 (7.521455 s / it)
+* Acc@1 60.076 Acc@5 89.368 loss 1.387
+Accuracy at epoch 53 of the network on test images: 60.1%
+Max accuracy so far: 60.08%
+Epoch: [54]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.089249 (1.089249)  time: 12.408709  data: 8.146239  max mem: 26099
+Epoch: [54]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.071881 (1.080565)  time: 7.139864  data: 4.149966  max mem: 26099
+Epoch: [54] Total time: 0:00:14 (7.229484 s / it)
+Averaged stats: lr: 0.000500  loss: 1.071881 (1.080565)
+Test:  [0/2]  eta: 0:00:26  loss: 1.396552 (1.396552)  acc1: 59.033203 (59.033203)  acc5: 88.476562 (88.476562)  time: 13.085558  data: 8.824824  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.396552 (1.422719)  acc1: 58.674702 (58.929813)  acc5: 87.831329 (88.290481)  time: 7.402614  data: 4.412604  max mem: 26099
+Test: Total time: 0:00:14 (7.488659 s / it)
+* Acc@1 58.930 Acc@5 88.290 loss 1.423
+Accuracy at epoch 54 of the network on test images: 58.9%
+Max accuracy so far: 60.08%
+Epoch: [55]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.086552 (1.086552)  time: 12.459990  data: 8.200159  max mem: 26099
+Epoch: [55]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.054837 (1.070695)  time: 7.164967  data: 4.176582  max mem: 26099
+Epoch: [55] Total time: 0:00:14 (7.252654 s / it)
+Averaged stats: lr: 0.000500  loss: 1.054837 (1.070695)
+Test:  [0/2]  eta: 0:00:26  loss: 1.370637 (1.370637)  acc1: 59.033203 (59.033203)  acc5: 89.160156 (89.160156)  time: 13.080821  data: 8.814152  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.340012 (1.355325)  acc1: 59.033203 (59.589993)  acc5: 89.160156 (89.263378)  time: 7.399711  data: 4.407289  max mem: 26099
+Test: Total time: 0:00:14 (7.486260 s / it)
+* Acc@1 59.590 Acc@5 89.263 loss 1.355
+Accuracy at epoch 55 of the network on test images: 59.6%
+Max accuracy so far: 60.08%
+Epoch: [56]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.074210 (1.074210)  time: 12.377817  data: 8.110641  max mem: 26099
+Epoch: [56]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.074210 (1.083956)  time: 7.125117  data: 4.132188  max mem: 26099
+Epoch: [56] Total time: 0:00:14 (7.213461 s / it)
+Averaged stats: lr: 0.000500  loss: 1.074210 (1.083956)
+Test:  [0/2]  eta: 0:00:26  loss: 1.377083 (1.377083)  acc1: 58.691406 (58.691406)  acc5: 88.671875 (88.671875)  time: 13.145996  data: 8.887607  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.377083 (1.392535)  acc1: 58.691406 (59.103545)  acc5: 88.671875 (88.776929)  time: 7.432547  data: 4.444025  max mem: 26099
+Test: Total time: 0:00:15 (7.521905 s / it)
+* Acc@1 59.104 Acc@5 88.777 loss 1.393
+Accuracy at epoch 56 of the network on test images: 59.1%
+Max accuracy so far: 60.08%
+Epoch: [57]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.039194 (1.039194)  time: 12.361103  data: 8.098132  max mem: 26099
+Epoch: [57]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.039194 (1.054709)  time: 7.118071  data: 4.128064  max mem: 26099
+Epoch: [57] Total time: 0:00:14 (7.206147 s / it)
+Averaged stats: lr: 0.000500  loss: 1.039194 (1.054709)
+Test:  [0/2]  eta: 0:00:26  loss: 1.387426 (1.387426)  acc1: 59.375000 (59.375000)  acc5: 89.208984 (89.208984)  time: 13.128589  data: 8.865231  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.380863 (1.384145)  acc1: 58.433735 (59.103544)  acc5: 89.208984 (89.332871)  time: 7.423281  data: 4.432795  max mem: 26099
+Test: Total time: 0:00:15 (7.509806 s / it)
+* Acc@1 59.104 Acc@5 89.333 loss 1.384
+Accuracy at epoch 57 of the network on test images: 59.1%
+Max accuracy so far: 60.08%
+Epoch: [58]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.082881 (1.082881)  time: 12.379253  data: 8.113400  max mem: 26099
+Epoch: [58]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.059950 (1.071416)  time: 7.124940  data: 4.133416  max mem: 26099
+Epoch: [58] Total time: 0:00:14 (7.210321 s / it)
+Averaged stats: lr: 0.000500  loss: 1.059950 (1.071416)
+Test:  [0/2]  eta: 0:00:26  loss: 1.427788 (1.427788)  acc1: 58.056641 (58.056641)  acc5: 88.183594 (88.183594)  time: 13.076923  data: 8.811179  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.290322 (1.359055)  acc1: 58.056641 (59.138291)  acc5: 88.183594 (88.881167)  time: 7.397930  data: 4.405809  max mem: 26099
+Test: Total time: 0:00:14 (7.483375 s / it)
+* Acc@1 59.138 Acc@5 88.881 loss 1.359
+Accuracy at epoch 58 of the network on test images: 59.1%
+Max accuracy so far: 60.08%
+Epoch: [59]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.088241 (1.088241)  time: 12.370006  data: 8.118164  max mem: 26099
+Epoch: [59]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.025275 (1.056758)  time: 7.120822  data: 4.134903  max mem: 26099
+Epoch: [59] Total time: 0:00:14 (7.207520 s / it)
+Averaged stats: lr: 0.000500  loss: 1.025275 (1.056758)
+Test:  [0/2]  eta: 0:00:26  loss: 1.442900 (1.442900)  acc1: 57.958984 (57.958984)  acc5: 87.646484 (87.646484)  time: 13.143982  data: 8.882660  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.329410 (1.386155)  acc1: 57.958984 (58.756081)  acc5: 87.646484 (88.359973)  time: 7.432117  data: 4.441531  max mem: 26099
+Test: Total time: 0:00:15 (7.518727 s / it)
+* Acc@1 58.756 Acc@5 88.360 loss 1.386
+Accuracy at epoch 59 of the network on test images: 58.8%
+Max accuracy so far: 60.08%
+Epoch: [60]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.017034 (1.017034)  time: 12.375333  data: 8.120203  max mem: 26099
+Epoch: [60]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.017034 (1.030036)  time: 7.123958  data: 4.137261  max mem: 26099
+Epoch: [60] Total time: 0:00:14 (7.209826 s / it)
+Averaged stats: lr: 0.000500  loss: 1.017034 (1.030036)
+Test:  [0/2]  eta: 0:00:26  loss: 1.384697 (1.384697)  acc1: 59.375000 (59.375000)  acc5: 88.769531 (88.769531)  time: 13.133289  data: 8.878317  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.384697 (1.418109)  acc1: 57.108437 (58.721335)  acc5: 88.192772 (88.603197)  time: 7.426630  data: 4.439373  max mem: 26099
+Test: Total time: 0:00:15 (7.513984 s / it)
+* Acc@1 58.721 Acc@5 88.603 loss 1.418
+Accuracy at epoch 60 of the network on test images: 58.7%
+Max accuracy so far: 60.08%
+Epoch: [61]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.040101 (1.040101)  time: 12.367137  data: 8.109856  max mem: 26099
+Epoch: [61]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.040101 (1.053978)  time: 7.118716  data: 4.131730  max mem: 26099
+Epoch: [61] Total time: 0:00:14 (7.208250 s / it)
+Averaged stats: lr: 0.000500  loss: 1.040101 (1.053978)
+Test:  [0/2]  eta: 0:00:26  loss: 1.352994 (1.352994)  acc1: 60.302734 (60.302734)  acc5: 89.257812 (89.257812)  time: 13.130974  data: 8.876211  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.352994 (1.380427)  acc1: 57.469879 (59.485754)  acc5: 89.156631 (89.228632)  time: 7.424819  data: 4.438294  max mem: 26099
+Test: Total time: 0:00:15 (7.513423 s / it)
+* Acc@1 59.486 Acc@5 89.229 loss 1.380
+Accuracy at epoch 61 of the network on test images: 59.5%
+Max accuracy so far: 60.08%
+Epoch: [62]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.037374 (1.037374)  time: 12.472823  data: 8.205442  max mem: 26099
+Epoch: [62]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.030734 (1.034054)  time: 7.170766  data: 4.178608  max mem: 26099
+Epoch: [62] Total time: 0:00:14 (7.258987 s / it)
+Averaged stats: lr: 0.000500  loss: 1.030734 (1.034054)
+Test:  [0/2]  eta: 0:00:26  loss: 1.347054 (1.347054)  acc1: 59.472656 (59.472656)  acc5: 90.136719 (90.136719)  time: 13.119147  data: 8.855125  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.347054 (1.392776)  acc1: 57.951809 (59.034052)  acc5: 88.072289 (89.541348)  time: 7.419163  data: 4.427782  max mem: 26099
+Test: Total time: 0:00:15 (7.506205 s / it)
+* Acc@1 59.034 Acc@5 89.541 loss 1.393
+Accuracy at epoch 62 of the network on test images: 59.0%
+Max accuracy so far: 60.08%
+Epoch: [63]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.008891 (1.008891)  time: 12.434506  data: 8.170400  max mem: 26099
+Epoch: [63]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.008891 (1.038185)  time: 7.153387  data: 4.162218  max mem: 26099
+Epoch: [63] Total time: 0:00:14 (7.238919 s / it)
+Averaged stats: lr: 0.000500  loss: 1.008891 (1.038185)
+Test:  [0/2]  eta: 0:00:26  loss: 1.347725 (1.347725)  acc1: 60.058594 (60.058594)  acc5: 89.208984 (89.208984)  time: 13.073142  data: 8.810498  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.347725 (1.364738)  acc1: 58.192772 (59.520501)  acc5: 89.208984 (89.332871)  time: 7.396399  data: 4.405432  max mem: 26099
+Test: Total time: 0:00:14 (7.481933 s / it)
+* Acc@1 59.521 Acc@5 89.333 loss 1.365
+Accuracy at epoch 63 of the network on test images: 59.5%
+Max accuracy so far: 60.08%
+Epoch: [64]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.013216 (1.013216)  time: 12.455292  data: 8.186070  max mem: 26099
+Epoch: [64]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.006832 (1.010024)  time: 7.163235  data: 4.169543  max mem: 26099
+Epoch: [64] Total time: 0:00:14 (7.249633 s / it)
+Averaged stats: lr: 0.000500  loss: 1.006832 (1.010024)
+Test:  [0/2]  eta: 0:00:26  loss: 1.379230 (1.379230)  acc1: 57.958984 (57.958984)  acc5: 90.136719 (90.136719)  time: 13.073924  data: 8.806213  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.339877 (1.359554)  acc1: 57.958984 (58.964559)  acc5: 89.518074 (89.958305)  time: 7.396659  data: 4.403307  max mem: 26099
+Test: Total time: 0:00:14 (7.483241 s / it)
+* Acc@1 58.965 Acc@5 89.958 loss 1.360
+Accuracy at epoch 64 of the network on test images: 59.0%
+Max accuracy so far: 60.08%
+Epoch: [65]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.032914 (1.032914)  time: 12.419342  data: 8.153687  max mem: 26099
+Epoch: [65]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.032914 (1.046426)  time: 7.144830  data: 4.153347  max mem: 26099
+Epoch: [65] Total time: 0:00:14 (7.231700 s / it)
+Averaged stats: lr: 0.000500  loss: 1.032914 (1.046426)
+Test:  [0/2]  eta: 0:00:26  loss: 1.371760 (1.371760)  acc1: 58.984375 (58.984375)  acc5: 89.550781 (89.550781)  time: 13.118172  data: 8.857372  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.367144 (1.369452)  acc1: 56.867470 (58.373871)  acc5: 89.397591 (89.506602)  time: 7.418890  data: 4.428866  max mem: 26099
+Test: Total time: 0:00:15 (7.505193 s / it)
+* Acc@1 58.374 Acc@5 89.507 loss 1.369
+Accuracy at epoch 65 of the network on test images: 58.4%
+Max accuracy so far: 60.08%
+Epoch: [66]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 1.017288 (1.017288)  time: 12.464694  data: 8.202765  max mem: 26099
+Epoch: [66]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 1.009179 (1.013233)  time: 7.167360  data: 4.178063  max mem: 26099
+Epoch: [66] Total time: 0:00:14 (7.257538 s / it)
+Averaged stats: lr: 0.000500  loss: 1.009179 (1.013233)
+Test:  [0/2]  eta: 0:00:26  loss: 1.329246 (1.329246)  acc1: 61.181641 (61.181641)  acc5: 89.599609 (89.599609)  time: 13.200867  data: 8.931904  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.293822 (1.311534)  acc1: 60.481930 (60.979848)  acc5: 89.599609 (89.784573)  time: 7.460551  data: 4.466168  max mem: 26099
+Test: Total time: 0:00:15 (7.549116 s / it)
+* Acc@1 60.980 Acc@5 89.785 loss 1.312
+Accuracy at epoch 66 of the network on test images: 61.0%
+Max accuracy so far: 60.98%
+Epoch: [67]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 0.998009 (0.998009)  time: 12.428697  data: 8.162270  max mem: 26099
+Epoch: [67]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 0.998009 (1.005944)  time: 7.151846  data: 4.159312  max mem: 26099
+Epoch: [67] Total time: 0:00:14 (7.239413 s / it)
+Averaged stats: lr: 0.000500  loss: 0.998009 (1.005944)
+Test:  [0/2]  eta: 0:00:26  loss: 1.367579 (1.367579)  acc1: 59.179688 (59.179688)  acc5: 88.916016 (88.916016)  time: 13.178276  data: 8.918154  max mem: 26099
+Test:  [1/2]  eta: 0:00:07  loss: 1.343506 (1.355543)  acc1: 59.036144 (59.138290)  acc5: 88.916016 (89.054899)  time: 7.449190  data: 4.459301  max mem: 26099
+Test: Total time: 0:00:15 (7.536108 s / it)
+* Acc@1 59.138 Acc@5 89.055 loss 1.356
+Accuracy at epoch 67 of the network on test images: 59.1%
+Max accuracy so far: 60.98%
+Epoch: [68]  [0/2]  eta: 0:00:24  lr: 0.000500  loss: 0.984348 (0.984348)  time: 12.435140  data: 8.173438  max mem: 26099
+Epoch: [68]  [1/2]  eta: 0:00:07  lr: 0.000500  loss: 0.984348 (0.991840)  time: 7.152534  data: 4.163592  max mem: 26099
+Epoch: [68] Total time: 0:00:14 (7.238606 s / it)
+Averaged stats: lr: 0.000500  loss: 0.984348 (0.991840)
