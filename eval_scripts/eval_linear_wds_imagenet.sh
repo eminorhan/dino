@@ -31,21 +31,21 @@ echo $MODEL
 echo $SUBJECT
 echo $ARCH
 
-# labeled_s
+# imagenet
 srun python -u /scratch/eo41/dino/eval_linear_wds.py \
 	--arch $ARCH \
 	--pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
 	--save_prefix ${SUBJECT}_5fps_${MODEL} \
 	--checkpoint_key "teacher" \
-	--batch_size_per_gpu 2048 \
+	--batch_size_per_gpu 1024 \
 	--epochs 500 \
 	--num_workers 1 \
 	--lr 0.0005 \
-	--output_dir "/scratch/eo41/dino/evals/labeled_s" \
-	--train_data_path "/scratch/eo41/data/labeled_s/labeled_s_train_000000.tar" \
-	--val_data_path "/scratch/eo41/data/labeled_s/labeled_s_val_000000.tar" \
-	--n_train 2878 \
-	--n_val 2878 \
-	--num_labels 26
+	--output_dir "/scratch/eo41/dino/evals/imagenet" \
+	--train_data_path "/scratch/eo41/data/imagenet/imagenet_train_{000000..000001}.tar" \
+	--val_data_path "/scratch/eo41/data/imagenet/imagenet_val_000000.tar" \
+	--n_train 1281167 \
+	--n_val 50000 \
+	--num_labels 1000
 	
 echo "Done"
