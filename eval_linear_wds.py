@@ -10,20 +10,9 @@ import torch.backends.cudnn as cudnn
 from torchvision import transforms as pth_transforms
 from torchvision import models as torchvision_models
 
-import webdataset as wds
 import dino_utils as utils
 import vision_transformer as vits
 
-class WebDatasetWithLength(wds.WebDataset):
-    def __init__(self, *args, length=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.length = length
-
-    def __len__(self):
-        return self.length    
-
-def identity(x):
-    return x
 
 def eval_linear(args):
     utils.init_distributed_mode(args)
@@ -66,11 +55,11 @@ def eval_linear(args):
         pth_transforms.ToTensor(),
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
-    val_dataset = (WebDatasetWithLength(args.val_data_path, resampled=True, length=args.n_val)
+    val_dataset = (utils.WebDatasetWithLength(args.val_data_path, resampled=True, length=args.n_val)
                       .shuffle(10000, initial=10000)
                       .decode("pil")
                       .to_tuple("jpg", "cls")
-                      .map_tuple(val_transform, identity)
+                      .map_tuple(val_transform, utils.identity)
                       .with_epoch(args.n_val)
                       )
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=args.batch_size_per_gpu, num_workers=args.num_workers, pin_memory=True)
@@ -87,16 +76,15 @@ def eval_linear(args):
         pth_transforms.ToTensor(),
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
-    train_dataset = (WebDatasetWithLength(args.train_data_path, resampled=True, length=args.n_train)
+    train_dataset = (utils.WebDatasetWithLength(args.train_data_path, resampled=True, length=args.n_train)
                         .shuffle(10000, initial=10000)
                         .decode("pil")
                         .to_tuple("jpg", "cls")
-                        .map_tuple(train_transform, identity)
+                        .map_tuple(train_transform, utils.identity)
                         .with_epoch(args.n_train)
                         )
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=args.batch_size_per_gpu, num_workers=args.num_workers, pin_memory=True)
     print(f"Data loaded with train and val imgs.")
-    print(len(list(train_loader)))
 
     # set optimizer
     optimizer = torch.optim.Adam(linear_classifier.parameters(), args.lr)

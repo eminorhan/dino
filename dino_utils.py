@@ -31,6 +31,7 @@ import torch
 from torch import nn
 import torch.distributed as dist
 from PIL import ImageFilter, ImageOps
+import webdataset as wds
 
 
 class GaussianBlur(object):
@@ -66,6 +67,19 @@ class Solarization(object):
             return ImageOps.solarize(img)
         else:
             return img
+
+
+class WebDatasetWithLength(wds.WebDataset):
+    def __init__(self, *args, length=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.length = length
+
+    def __len__(self):
+        return self.length    
+
+
+def identity(x):
+    return x
 
 
 def load_pretrained_weights(model, pretrained_weights, checkpoint_key, model_name, patch_size):

@@ -1,0 +1,114 @@
+Launced with slurm
+Launced with slurm
+Launced with slurm
+Launced with slurm
+world size, rank, gpu, device count: 4 1 1 4
+world size, rank, gpu, device count: 4 3 3 4
+world size, rank, gpu, device count: 4 0 0 4
+world size, rank, gpu, device count: 4 2 2 4
+| distributed init (rank 0): env://
+| distributed init (rank 3): env://
+| distributed init (rank 2): env://
+| distributed init (rank 1): env://
+git:
+  sha: 237b6a9bfc30492be5ace81d8cb06356b3603d05, status: has uncommited changes, branch: master
+
+arch: vit_base
+batch_size_per_gpu: 128
+clip_grad: 1.0
+data_path: /scratch/eo41/data/saycam/S_5fps_300s_{000000..000003}.tar
+dist_url: env://
+epochs: 100
+freeze_last_layer: 0
+global_crops_scale: [0.2, 1.0]
+gpu: 0
+local_crops_number: 8
+local_crops_scale: [0.05, 0.2]
+local_rank: 0
+lr: 0.0001
+min_lr: 0.0001
+momentum_teacher: 0.9995
+norm_last_layer: True
+num_workers: 8
+optimizer: adamw
+out_dim: 65536
+output_dir: /scratch/eo41/dino/models_vitb16
+patch_size: 16
+print_freq: 5000
+rank: 0
+save_prefix: s_5fps_vitb16
+saveckp_freq: 5000
+seed: 1
+teacher_temp: 0.04
+use_bn_in_head: False
+use_fp16: False
+warmup_epochs: 0
+warmup_teacher_temp: 0.04
+warmup_teacher_temp_epochs: 0
+weight_decay: 0.0
+weight_decay_end: 0.0
+world_size: 4
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+Data loaded.
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+Student and Teacher are built: they are both vit_base network.
+Loss, optimizer and schedulers ready.
+Found checkpoint at /scratch/eo41/dino/models_vitb16/s_5fps_vitb16_checkpoint.pth
+=> loaded 'student' from checkpoint '/scratch/eo41/dino/models_vitb16/s_5fps_vitb16_checkpoint.pth' with msg <All keys matched successfully>
+=> loaded 'teacher' from checkpoint '/scratch/eo41/dino/models_vitb16/s_5fps_vitb16_checkpoint.pth' with msg <All keys matched successfully>
+=> loaded 'optimizer' from checkpoint: '/scratch/eo41/dino/models_vitb16/s_5fps_vitb16_checkpoint.pth'
+=> key 'fp16_scaler' not found in checkpoint: '/scratch/eo41/dino/models_vitb16/s_5fps_vitb16_checkpoint.pth'
+=> loaded 'dino_loss' from checkpoint '/scratch/eo41/dino/models_vitb16/s_5fps_vitb16_checkpoint.pth' with msg <All keys matched successfully>
+Starting DINO training !
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3631: UserWarning: Default upsampling behavior when mode=bicubic is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3679: UserWarning: The default behavior for interpolate/upsample with float scale_factor changed in 1.6.0 to align with other frameworks/libraries, and now uses scale_factor directly, instead of relying on the computed output size. If you wish to restore the old behavior, please set recompute_scale_factor=True. See the documentation of nn.Upsample for details. 
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3631: UserWarning: Default upsampling behavior when mode=bicubic is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3679: UserWarning: The default behavior for interpolate/upsample with float scale_factor changed in 1.6.0 to align with other frameworks/libraries, and now uses scale_factor directly, instead of relying on the computed output size. If you wish to restore the old behavior, please set recompute_scale_factor=True. See the documentation of nn.Upsample for details. 
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3631: UserWarning: Default upsampling behavior when mode=bicubic is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3679: UserWarning: The default behavior for interpolate/upsample with float scale_factor changed in 1.6.0 to align with other frameworks/libraries, and now uses scale_factor directly, instead of relying on the computed output size. If you wish to restore the old behavior, please set recompute_scale_factor=True. See the documentation of nn.Upsample for details. 
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3631: UserWarning: Default upsampling behavior when mode=bicubic is changed to align_corners=False since 0.4.0. Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3679: UserWarning: The default behavior for interpolate/upsample with float scale_factor changed in 1.6.0 to align with other frameworks/libraries, and now uses scale_factor directly, instead of relying on the computed output size. If you wish to restore the old behavior, please set recompute_scale_factor=True. See the documentation of nn.Upsample for details. 
+  warnings.warn(
+Averaged stats: loss: 2.379688 (2.420453)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.326200 (2.307212)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.306452 (2.327384)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.314678 (2.315752)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.303173 (2.289399)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.313246 (2.273336)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.203605 (2.253259)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.233165 (2.238576)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.215135 (2.221618)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.195875 (2.206033)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.119302 (2.189072)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.177513 (2.173613)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.203101 (2.159149)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.198330 (2.146488)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.153554 (2.128659)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.098089 (2.121724)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.112573 (2.112514)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.144655 (2.101405)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.082248 (2.089244)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.060092 (2.079473)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.082823 (2.073192)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.056891 (2.063383)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.076164 (2.055195)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.033102 (2.046141)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.056397 (2.040660)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 1.988889 (2.032893)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.059550 (2.021420)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+slurmstepd: error: *** STEP 25634688.0 ON ga003 CANCELLED AT 2022-10-06T12:00:18 DUE TO TIME LIMIT ***
+slurmstepd: error: *** JOB 25634688 ON ga003 CANCELLED AT 2022-10-06T12:00:18 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.

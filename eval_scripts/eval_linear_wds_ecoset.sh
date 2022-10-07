@@ -8,7 +8,7 @@
 #SBATCH --time=48:00:00
 #SBATCH --job-name=dino_eval_linear_wds
 #SBATCH --output=dino_eval_linear_wds_%A_%a.out
-#SBATCH --array=0-11
+#SBATCH --array=4-5
 
 export MASTER_ADDR=$(hostname -s)
 export MASTER_PORT=$(shuf -i 10000-65500 -n 1)

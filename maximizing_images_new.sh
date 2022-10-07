@@ -5,10 +5,10 @@
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=200GB
-#SBATCH --time=48:00:00
-#SBATCH --job-name=dino_eval_linear_wds
-#SBATCH --output=dino_eval_linear_wds_%A_%a.out
-#SBATCH --array=4-5
+#SBATCH --time=00:50:00
+#SBATCH --job-name=maximizing_images
+#SBATCH --output=maximizing_images_%A_%a.out
+#SBATCH --array=4
 
 export MASTER_ADDR=$(hostname -s)
 export MASTER_PORT=$(shuf -i 10000-65500 -n 1)
@@ -31,21 +31,19 @@ echo $MODEL
 echo $SUBJECT
 echo $ARCH
 
-# imagenet
-srun python -u /scratch/eo41/dino/eval_linear_wds.py \
+# --pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
+# konkle
+srun python -u /scratch/eo41/dino/maximizing_images_new.py \
 	--arch $ARCH \
-	--pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
+	--patch_size 16 \
+	--pretrained_weights '' \
 	--save_prefix ${SUBJECT}_5fps_${MODEL} \
 	--checkpoint_key "teacher" \
 	--batch_size_per_gpu 1024 \
-	--epochs 500 \
 	--num_workers 1 \
-	--lr 0.0005 \
-	--output_dir "/scratch/eo41/dino/evals/imagenet" \
-	--train_data_path "/scratch/eo41/data/imagenet/imagenet_train_{000000..000001}.tar" \
-	--val_data_path "/scratch/eo41/data/imagenet/imagenet_val_000000.tar" \
-	--n_train 1281167 \
-	--n_val 50000 \
-	--num_labels 1000
+	--output_dir "/scratch/eo41/dino/maximizing_images/konkle_objects" \
+	--val_data_path "/scratch/eo41/data/konkle_objects/konkle_objects_000000.tar" \
+	--n_val 4040 \
+	--num_labels 240
 	
 echo "Done"

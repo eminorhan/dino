@@ -99,11 +99,13 @@ if __name__ == '__main__':
     parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_small', 'vit_base', 'vit_large'], help='Architecture (support only ViT atm).')
     parser.add_argument('--patch_size', default=16, type=int, help='Patch resolution of the model.')
     parser.add_argument('--pretrained_weights', default='', type=str, help="Path to pretrained weights to load.")
-    parser.add_argument("--checkpoint_key", default="student", type=str, help='Key to use in the checkpoint (example: "teacher")')
+    parser.add_argument("--checkpoint_key", default="teacher", type=str, help='Key to use in the checkpoint (example: "teacher")')
     parser.add_argument("--image_path", default=None, type=str, help="Path of the image to load.")
     parser.add_argument("--image_size", default=(512, 512), type=int, nargs="+", help="Resize image.")
     parser.add_argument('--output_dir', default='.', help='Path where to save visualizations.')
     parser.add_argument("--threshold", type=float, default=None, help="""We visualize masks obtained by thresholding the self-attention maps to keep xx% of the mass.""")
+    parser.add_argument("--save_name", default="atts", type=str, help='File name to use for saving')
+
     args = parser.parse_args()
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -113,6 +115,8 @@ if __name__ == '__main__':
         p.requires_grad = False
     model.eval()
     model.to(device)
+    print(model)
+
     if os.path.isfile(args.pretrained_weights):
         state_dict = torch.load(args.pretrained_weights, map_location="cpu")
         if args.checkpoint_key is not None and args.checkpoint_key in state_dict:
@@ -202,7 +206,7 @@ if __name__ == '__main__':
 
     display_tensor = torch.cat((img, new_attentions))
     print(display_tensor.shape)
-    torchvision.utils.save_image(display_tensor, "atts.jpeg", nrow=5, padding=1, normalize=True, scale_each=True)
+    torchvision.utils.save_image(display_tensor, args.save_name + ".jpeg", nrow=5, padding=1, normalize=True, scale_each=True)
 
     # # save attentions heatmaps
     # os.makedirs(args.output_dir, exist_ok=True)

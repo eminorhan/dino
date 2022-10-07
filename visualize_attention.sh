@@ -25,6 +25,7 @@ srun python -u /scratch/eo41/dino/visualize_attention.py \
 	--threshold 0.7 \
 	--output_dir "/scratch/eo41/dino/visualizations" \
 	--image_path "/scratch/eo41/dino/visualizations/imgs/saycam_5.jpeg" \
-	--pretrained_weights "/scratch/eo41/mugs/models_vitb/say_5fps_vitb16_checkpoint.pth"
+	--save_name "atts_saycam_5" \
+	--pretrained_weights "/scratch/eo41/dino/models_vitb16/say_5fps_vitb16_checkpoint.pth"
 				
 echo "Done"
