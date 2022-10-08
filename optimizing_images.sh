@@ -31,19 +31,17 @@ echo $MODEL
 echo $SUBJECT
 echo $ARCH
 
-# --pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
+# 	--pretrained_weights '' \
 # konkle
-srun python -u /scratch/eo41/dino/maximizing_images_new.py \
+srun python -u /scratch/eo41/dino/optimizing_images.py \
 	--arch $ARCH \
 	--patch_size 16 \
-	--pretrained_weights '' \
-	--save_prefix ${SUBJECT}_5fps_${MODEL} \
+	--pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
+	--save_prefix ${SUBJECT}_${MODEL} \
 	--checkpoint_key "teacher" \
-	--batch_size_per_gpu 1024 \
-	--num_workers 1 \
-	--output_dir "/scratch/eo41/dino/maximizing_images/konkle_objects" \
-	--val_data_path "/scratch/eo41/data/konkle_objects/konkle_objects_000000.tar" \
-	--n_val 4040 \
-	--num_labels 240
+	--batch_size 1024 \
+	--num_workers 4 \
+	--output_dir "/scratch/eo41/dino/optimizing_images/konkle_objects" \
+	--val_data_path "/scratch/eo41/konkle_objects/"
 	
 echo "Done"

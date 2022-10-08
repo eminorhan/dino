@@ -104,3 +104,11 @@ Averaged stats: loss: 2.145462 (2.203772)  lr: 0.000100 (0.000100)  wd: 0.000000
 Averaged stats: loss: 2.171656 (2.192267)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
 Averaged stats: loss: 2.129577 (2.182440)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
 Averaged stats: loss: 2.204377 (2.165637)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.147779 (2.159913)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.151370 (2.147890)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.161103 (2.144735)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.098651 (2.131264)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.117039 (2.121339)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+slurmstepd: error: *** JOB 25689637 ON ga008 CANCELLED AT 2022-10-08T02:04:39 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** STEP 25689637.0 ON ga008 CANCELLED AT 2022-10-08T02:04:39 DUE TO TIME LIMIT ***

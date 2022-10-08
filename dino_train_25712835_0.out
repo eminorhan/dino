@@ -65,3 +65,16 @@ Starting DINO training !
 /scratch/eo41/miniconda3/lib/python3.9/site-packages/torch/nn/functional.py:3679: UserWarning: The default behavior for interpolate/upsample with float scale_factor changed in 1.6.0 to align with other frameworks/libraries, and now uses scale_factor directly, instead of relying on the computed output size. If you wish to restore the old behavior, please set recompute_scale_factor=True. See the documentation of nn.Upsample for details. 
   warnings.warn(
 Averaged stats: loss: 2.837789 (2.844095)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.721066 (2.717772)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.692709 (2.689292)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.612182 (2.663229)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.615072 (2.661430)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.628051 (2.641783)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.580839 (2.620461)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.594039 (2.599174)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.554939 (2.579241)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.545487 (2.563315)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.527911 (2.552193)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.523984 (2.542496)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.539038 (2.527221)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)
+Averaged stats: loss: 2.499846 (2.512322)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)

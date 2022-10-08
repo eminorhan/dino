@@ -1,3 +1,4 @@
+import os
 import sys
 import argparse
 import numpy as np
@@ -60,12 +61,11 @@ def find_optimizing_imgs(args):
         print(f"Unknow architecture: {args.arch}")
         sys.exit(1)
 
-    model = torch.nn.DataParallel(model)
     model.cuda()
     model.eval()
 
     # load weights to evaluate
-    utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
+    #utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
     print(f"Model {args.arch} built.")
 
     # ============ preparing data ... ============
@@ -89,13 +89,27 @@ def find_optimizing_imgs(args):
         max_accs.append(max_acc)
         max_labels.append(max_label)
     
+    print('Mean (std) max accs:', np.mean(max_accs), np.std(max_accs))
+    median_f_idx = 0
+
     # plot best images for some individual features
     sorted_pred_idx = np.argsort(preds, axis=0)
-    worst_idx = sorted_pred_idx[:args.top_k_imgs, 3]  # second idx is the filter idx
-    best_idx = sorted_pred_idx[-args.top_k_imgs:, 3]  # second idx is the filter idx
+    worst_idx = sorted_pred_idx[:args.top_k_imgs, median_f_idx]  
+    best_idx = sorted_pred_idx[-args.top_k_imgs:, median_f_idx]  
 
-    save_image(worst_imgs, 'worst.pdf', nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
-    save_image(best_imgs, 'best.pdf', nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
+    worst_imgs = []
+    for i in worst_idx:
+        worst_imgs.append(val_dataset[i][0].unsqueeze(0))
+
+    best_imgs = []
+    for i in best_idx[::-1]:
+        best_imgs.append(val_dataset[i][0].unsqueeze(0))
+
+    worst_imgs = torch.cat(worst_imgs, 0)
+    best_imgs = torch.cat(best_imgs, 0)
+
+    save_image(worst_imgs, os.path.join(args.output_dir, args.save_prefix + '_worst.pdf'), nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
+    save_image(best_imgs, os.path.join(args.output_dir, args.save_prefix + '_best.pdf'), nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
 
 @torch.no_grad()
 def forward_imgs(val_loader, model, args):
@@ -149,7 +163,7 @@ if __name__ == '__main__':
     parser.add_argument('--val_data_path', default='', type=str)
 
     # misc
-    parser.add_argument('--num_workers', default=1, type=int, help='Number of data loading workers per GPU.')
+    parser.add_argument('--num_workers', default=4, type=int, help='Number of data loading workers per GPU.')
     parser.add_argument('--output_dir', default=".", help='Path to save logs and checkpoints')
     parser.add_argument("--save_prefix", default="", type=str, help="""prefix for saving checkpoint and log files""")
 
