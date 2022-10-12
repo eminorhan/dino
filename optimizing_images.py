@@ -46,7 +46,7 @@ def one_vs_rest_accuracy(one, rest):
     acc = max(m, 1.-m)
     return acc
 
-def find_optimizing_imgs(args):
+def find_optimizing_imgs(args, feature_idxs):
     utils.init_distributed_mode(args)
     print("git:\n  {}\n".format(utils.get_sha()))
     print("\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items())))
@@ -96,28 +96,36 @@ def find_optimizing_imgs(args):
         max_acc, max_label = max_accuracy(resp, labels)
         max_accs.append(max_acc)
         max_labels.append(max_label)
-    
     print('Mean (std) max accs:', np.mean(max_accs), np.std(max_accs))
-    median_f_idx = 0
 
-    # plot best images for some individual features
+    # save preds + labels + max_accs + max_labels for further analysis
+    save_path = os.path.join(args.output_dir, args.save_prefix + '_preds_labels.npz')
+    np.savez(save_path, preds=preds, labels=labels, max_accs=max_accs, max_labels=max_labels)
+
     sorted_pred_idx = np.argsort(preds, axis=0)
-    worst_idx = sorted_pred_idx[:args.top_k_imgs, median_f_idx]  
-    best_idx = sorted_pred_idx[-args.top_k_imgs:, median_f_idx]  
 
-    worst_imgs = []
-    for i in worst_idx:
-        worst_imgs.append(val_dataset[i][0].unsqueeze(0))
+    # plot optimizing images for some individual features
+    for f_idx in feature_idxs:
+        worst_idx = sorted_pred_idx[:args.top_k_imgs, f_idx]  
+        best_idx = sorted_pred_idx[-args.top_k_imgs:, f_idx]  
 
-    best_imgs = []
-    for i in best_idx[::-1]:
-        best_imgs.append(val_dataset[i][0].unsqueeze(0))
+        worst_imgs = []
+        for i in worst_idx:
+            worst_imgs.append(val_dataset[i][0].unsqueeze(0))
 
-    worst_imgs = torch.cat(worst_imgs, 0)
-    best_imgs = torch.cat(best_imgs, 0)
+        best_imgs = []
+        for i in best_idx[::-1]:
+            best_imgs.append(val_dataset[i][0].unsqueeze(0))
 
-    save_image(worst_imgs, os.path.join(args.output_dir, args.save_prefix + '_worst_imgs.pdf'), nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
-    save_image(best_imgs, os.path.join(args.output_dir, args.save_prefix + '_best_imgs.pdf'), nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
+        worst_imgs = torch.cat(worst_imgs, 0)
+        best_imgs = torch.cat(best_imgs, 0)
+
+        # save images
+        worst_path = os.path.join(args.output_dir, args.save_prefix + '_fidx_' + f_idx + '_worst_imgs.pdf')
+        best_path = os.path.join(args.output_dir, args.save_prefix + '_fidx_' + f_idx + '_best_imgs.pdf')
+
+        save_image(worst_imgs, worst_path, nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
+        save_image(best_imgs, best_path, nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
 
 @torch.no_grad()
 def forward_imgs(val_loader, model, args):
@@ -178,4 +186,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
 
-    find_optimizing_imgs(args)
+    feature_idxs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    find_optimizing_imgs(args, feature_idxs)
