@@ -4,8 +4,8 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=200GB
-#SBATCH --time=00:50:00
+#SBATCH --mem=240GB
+#SBATCH --time=00:30:00
 #SBATCH --job-name=maximizing_images
 #SBATCH --output=maximizing_images_%A_%a.out
 #SBATCH --array=4
@@ -39,9 +39,9 @@ srun python -u /scratch/eo41/dino/optimizing_images.py \
 	--pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
 	--save_prefix ${SUBJECT}_${MODEL} \
 	--checkpoint_key "teacher" \
-	--batch_size 1024 \
+	--batch_size 4096 \
 	--num_workers 4 \
-	--output_dir "/scratch/eo41/dino/optimizing_images/konkle_objects" \
-	--val_data_path "/scratch/eo41/konkle_objects/"
+	--output_dir "/scratch/eo41/dino/optimizing_images/ecoset" \
+	--val_data_path "/scratch/eo41/vast/ecoset/"
 	
 echo "Done"

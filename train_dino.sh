@@ -22,7 +22,7 @@ srun python -u /scratch/eo41/dino/train_dino.py \
 	--use_fp16 false \
 	--arch "vit_base" \
 	--patch_size 14 \
-	--batch_size_per_gpu 120 \
+	--batch_size_per_gpu 100 \
 	--num_workers 8 \
 	--freeze_last_layer 0 \
 	--lr 0.0001 \

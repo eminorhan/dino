@@ -65,7 +65,7 @@ def find_optimizing_imgs(args):
     model.eval()
 
     # load weights to evaluate
-    #utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
+    utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
     print(f"Model {args.arch} built.")
 
     # ============ preparing data ... ============
@@ -77,7 +77,9 @@ def find_optimizing_imgs(args):
     ])
     val_dataset = ImageFolder(args.val_data_path, transform=val_transform)
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True)
+    print('Data loaded: dataset contains {} images, and takes {} training iterations per epoch.'.format(len(val_dataset), len(val_loader)))
 
+    # forward prop all images, return last layer att. activations + images
     preds, labels = forward_imgs(val_loader, model, args)
 
     # compute best one vs rest classification accuracy for each feature
@@ -119,7 +121,7 @@ def forward_imgs(val_loader, model, args):
 
     metric_logger = utils.MetricLogger(delimiter="  ")
     header = 'Val:'
-    for inp, target in metric_logger.log_every(val_loader, len(val_loader), header):
+    for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 10, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
         target = target.cuda(non_blocking=True)

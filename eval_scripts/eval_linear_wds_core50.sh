@@ -31,7 +31,7 @@ echo $MODEL
 echo $SUBJECT
 echo $ARCH
 
-# labeled_s
+# core50
 srun python -u /scratch/eo41/dino/eval_linear_wds.py \
 	--arch $ARCH \
 	--pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
@@ -44,8 +44,8 @@ srun python -u /scratch/eo41/dino/eval_linear_wds.py \
 	--output_dir "/scratch/eo41/dino/evals/core50" \
 	--train_data_path "/scratch/eo41/data/core50/core50_train_000000.tar" \
 	--val_data_path "/scratch/eo41/data/core50/core50_val_000000.tar" \
-	--n_train 180000 \
-	--n_val 150000 \
+	--n_train 90000 \
+	--n_val 75000 \
 	--num_labels 50
 	
 echo "Done"
