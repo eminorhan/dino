@@ -32,7 +32,13 @@ def max_accuracy(responses, labels):
     return np.amax(accs), np.argmax(accs)
 
 def one_vs_rest_accuracy(one, rest):
-    '''compute one vs rest accuracy: probability a randomly selected pair will be correctly classified'''
+    """
+    compute one vs rest accuracy: probability a randomly selected pair will be correctly classified
+    
+    Returns:
+    --------
+    accuracy of discriminating one vs rest
+    """
     accs = []
     for o in one:
         accs.append(np.mean(o > rest))
@@ -79,7 +85,7 @@ def find_optimizing_imgs(args):
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True)
     print('Data loaded: dataset contains {} images, and takes {} training iterations per epoch.'.format(len(val_dataset), len(val_loader)))
 
-    # forward prop all images, return last layer att. activations + images
+    # forward prop all images, return last layer att. activations + labels
     preds, labels = forward_imgs(val_loader, model, args)
 
     # compute best one vs rest classification accuracy for each feature
@@ -110,8 +116,8 @@ def find_optimizing_imgs(args):
     worst_imgs = torch.cat(worst_imgs, 0)
     best_imgs = torch.cat(best_imgs, 0)
 
-    save_image(worst_imgs, os.path.join(args.output_dir, args.save_prefix + '_worst.pdf'), nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
-    save_image(best_imgs, os.path.join(args.output_dir, args.save_prefix + '_best.pdf'), nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
+    save_image(worst_imgs, os.path.join(args.output_dir, args.save_prefix + '_worst_imgs.pdf'), nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
+    save_image(best_imgs, os.path.join(args.output_dir, args.save_prefix + '_best_imgs.pdf'), nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
 
 @torch.no_grad()
 def forward_imgs(val_loader, model, args):
@@ -172,5 +178,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     print(args)
 
-    feature_idxs = []  # feature indices
     find_optimizing_imgs(args)
