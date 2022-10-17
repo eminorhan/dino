@@ -71,7 +71,7 @@ def find_optimizing_imgs(args, feature_idxs):
     model.eval()
 
     # load weights to evaluate
-    utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
+    #utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
     print(f"Model {args.arch} built.")
 
     # ============ preparing data ... ============
@@ -85,22 +85,25 @@ def find_optimizing_imgs(args, feature_idxs):
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True)
     print('Data loaded: dataset contains {} images, and takes {} training iterations per epoch.'.format(len(val_dataset), len(val_loader)))
 
+    print(val_dataset.classes)
+
     # forward prop all images, return last layer att. activations + labels
     preds, labels = forward_imgs(val_loader, model, args)
 
-    # compute best one vs rest classification accuracy for each feature
-    n_features = preds.shape[-1]
-    max_accs, max_labels = [], []
-    for f in range(n_features):
-        resp = preds[:, f]
-        max_acc, max_label = max_accuracy(resp, labels)
-        max_accs.append(max_acc)
-        max_labels.append(max_label)
-    print('Mean (std) max accs:', np.mean(max_accs), np.std(max_accs))
+    # # compute best one vs rest classification accuracy for each feature
+    # n_features = preds.shape[-1]
+    # max_accs, max_labels = [], []
+    # for f in range(n_features):
+    #     resp = preds[:, f]
+    #     max_acc, max_label = max_accuracy(resp, labels)
+    #     max_accs.append(max_acc)
+    #     max_labels.append(max_label)
+    # print('Mean (std) max accs:', np.mean(max_accs), np.std(max_accs))
 
     # save preds + labels + max_accs + max_labels for further analysis
     save_path = os.path.join(args.output_dir, args.save_prefix + '_preds_labels.npz')
-    np.savez(save_path, preds=preds, labels=labels, max_accs=max_accs, max_labels=max_labels)
+    np.savez(save_path, preds=preds, labels=labels)
+    # np.savez(save_path, preds=preds, labels=labels, max_accs=max_accs, max_labels=max_labels)
 
     sorted_pred_idx = np.argsort(preds, axis=0)
 
@@ -121,8 +124,8 @@ def find_optimizing_imgs(args, feature_idxs):
         best_imgs = torch.cat(best_imgs, 0)
 
         # save images
-        worst_path = os.path.join(args.output_dir, args.save_prefix + '_fidx_' + f_idx + '_worst_imgs.pdf')
-        best_path = os.path.join(args.output_dir, args.save_prefix + '_fidx_' + f_idx + '_best_imgs.pdf')
+        worst_path = os.path.join(args.output_dir, args.save_prefix + '_fidx_' + str(f_idx) + '_worst_imgs.pdf')
+        best_path = os.path.join(args.output_dir, args.save_prefix + '_fidx_' + str(f_idx) + '_best_imgs.pdf')
 
         save_image(worst_imgs, worst_path, nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
         save_image(best_imgs, best_path, nrow=int(np.sqrt(args.top_k_imgs)), normalize=True)
@@ -135,7 +138,7 @@ def forward_imgs(val_loader, model, args):
 
     metric_logger = utils.MetricLogger(delimiter="  ")
     header = 'Val:'
-    for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 10, header):
+    for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 1, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
         target = target.cuda(non_blocking=True)

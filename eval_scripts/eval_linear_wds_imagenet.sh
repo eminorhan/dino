@@ -35,6 +35,7 @@ echo $ARCH
 srun python -u /scratch/eo41/dino/eval_linear_wds.py \
 	--arch $ARCH \
 	--pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
+	--patch_size 14 \
 	--save_prefix ${SUBJECT}_5fps_${MODEL} \
 	--checkpoint_key "teacher" \
 	--batch_size_per_gpu 1024 \
