@@ -1,0 +1,64 @@
+Launced with slurm
+Launced with slurm
+Launced with slurm
+Launced with slurm
+world size, rank, gpu, device count: 4 1 1 4
+world size, rank, gpu, device count: 4 2 2 4
+world size, rank, gpu, device count: 4 0 0 4
+world size, rank, gpu, device count: 4 3 3 4
+| distributed init (rank 0): env://
+| distributed init (rank 1): env://
+| distributed init (rank 2): env://
+| distributed init (rank 3): env://
+git:
+  sha: 346823c4dbeddbbac170a65c45f83f4484a93286, status: has uncommited changes, branch: master
+
+arch: resnext50_32x4d
+batch_size_per_gpu: 128
+clip_grad: 1.0
+data_path: /scratch/eo41/data/saycam/Y_5fps_300s_{000000..000002}.tar
+dist_url: env://
+epochs: 100
+freeze_last_layer: 0
+global_crops_scale: [0.2, 1.0]
+gpu: 0
+local_crops_number: 8
+local_crops_scale: [0.05, 0.2]
+local_rank: 0
+lr: 0.0001
+min_lr: 0.0001
+momentum_teacher: 0.9995
+norm_last_layer: True
+num_workers: 8
+optimizer: adamw
+out_dim: 65536
+output_dir: /scratch/eo41/dino/models_resnext50
+patch_size: 16
+print_freq: 5000
+rank: 0
+save_prefix: y_5fps_resnext50
+saveckp_freq: 5000
+seed: 1
+teacher_temp: 0.04
+use_bn_in_head: False
+use_fp16: False
+warmup_epochs: 0
+warmup_teacher_temp: 0.04
+warmup_teacher_temp_epochs: 0
+weight_decay: 0.0
+weight_decay_end: 0.0
+world_size: 4
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+/scratch/eo41/miniconda3/lib/python3.9/site-packages/torchvision/transforms/transforms.py:852: UserWarning: Argument interpolation should be of type InterpolationMode instead of int. Please, use InterpolationMode enum.
+  warnings.warn(
+Data loaded.
+Embedding dimension of student & teacher nets 2048
+Student and Teacher are built: they are both resnext50_32x4d network.
+Loss, optimizer and schedulers ready.
+Starting DINO training !
+Averaged stats: loss: 10.456682 (10.456762)  lr: 0.000100 (0.000100)  wd: 0.000000 (0.000000)

@@ -3,6 +3,8 @@
 *.pth
 *.ckpt
 *.tar
+*.npz
 
 # Directories
 **/__pycache__/
+optimizing_images/

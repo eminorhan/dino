@@ -18,7 +18,6 @@ import vision_transformer as vits
 
 
 def eval_linear(args):
-    utils.init_distributed_mode(args)
     print("git:\n  {}\n".format(utils.get_sha()))
     print("\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items())))
     cudnn.benchmark = True
@@ -43,44 +42,69 @@ def eval_linear(args):
 
     model.cuda()
     model.eval()
+
     # load weights to evaluate
     utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
     print(f"Model {args.arch} built.")
 
     linear_classifier = LinearClassifier(embed_dim, num_labels=args.num_labels)
     linear_classifier = linear_classifier.cuda()
-    linear_classifier = nn.parallel.DistributedDataParallel(linear_classifier, device_ids=[args.gpu])
+    linear_classifier = nn.parallel.DataParallel(linear_classifier)
 
     # ============ preparing data ... ============
-    # validation data
+    # validation transforms
     val_transform = pth_transforms.Compose([
         pth_transforms.Resize(256, interpolation=3),
         pth_transforms.CenterCrop(224),
         pth_transforms.ToTensor(),
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
-    val_dataset = ImageFolder(args.val_data_path, transform=val_transform)
-    val_loader = DataLoader(val_dataset, batch_size=args.batch_size_per_gpu, shuffle=False, num_workers=args.num_workers, pin_memory=True)
 
-    # just evaluate model and finish
-    if args.evaluate:
-        utils.load_pretrained_linear_weights(linear_classifier, args.arch, args.patch_size)
-        test_stats = validate_network(val_loader, model, linear_classifier, args)
-        print(f"Accuracy of the network on test images: {test_stats['acc1']:.1f}%")
-        return
-
-    # training data
+    # training transforms
     train_transform = pth_transforms.Compose([
         pth_transforms.RandomResizedCrop(224),
         pth_transforms.RandomHorizontalFlip(),
         pth_transforms.ToTensor(),
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
-    train_dataset = ImageFolder(args.train_data_path, transform=train_transform)
-    sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
-    train_loader = torch.utils.data.DataLoader(train_dataset, sampler=sampler, batch_size=args.batch_size_per_gpu, num_workers=args.num_workers, pin_memory=True)
-    print(f"Data loaded with {len(train_dataset)} train and {len(val_dataset)} val imgs.")
-    print(f"{len(train_loader)} train and {len(val_loader)} val iterations per epoch.")
+
+    if args.split:
+        from torch.utils.data.sampler import SubsetRandomSampler
+
+        val_dataset = ImageFolder(args.train_data_path, transform=val_transform)
+        train_dataset = ImageFolder(args.train_data_path, transform=train_transform)
+
+        num_train = len(train_dataset)
+        print('Total data size is', num_train)
+
+        indices = list(range(num_train))
+        np.random.shuffle(indices)
+
+        if args.subsample:
+            num_data = int(0.1 * num_train)
+            train_idx, test_idx = indices[:(num_data // 2)], indices[(num_data // 2):num_data]
+        else:
+            split = int(np.floor(0.5 * num_train))  # split 50-50, change here if you need to do sth else
+            train_idx, test_idx = indices[:split], indices[split:]
+
+        train_sampler = SubsetRandomSampler(train_idx)
+        test_sampler = SubsetRandomSampler(test_idx)
+
+        train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True, sampler=train_sampler)
+        val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True, sampler=test_sampler)
+
+        print(f"Data loaded with {len(train_idx)} train and {len(test_idx)} val imgs.")
+        print(f"{len(train_loader)} train and {len(val_loader)} val iterations per epoch.")
+    else:
+        val_dataset = ImageFolder(args.val_data_path, transform=val_transform)
+        val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=args.num_workers, pin_memory=True)
+
+        train_dataset = ImageFolder(args.train_data_path, transform=train_transform)
+        train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, pin_memory=True)
+        
+        print(f"Data loaded with {len(train_dataset)} train and {len(val_dataset)} val imgs.")
+        print(f"{len(train_loader)} train and {len(val_loader)} val iterations per epoch.")
+    # ============ done data ... ============
 
     # set optimizer
     optimizer = torch.optim.Adam(linear_classifier.parameters(), args.lr)
@@ -130,7 +154,7 @@ def train(model, linear_classifier, optimizer, loader, epoch, args):
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter('lr', utils.SmoothedValue(window_size=1, fmt='{value:.6f}'))
     header = 'Epoch: [{}]'.format(epoch)
-    for (inp, target) in metric_logger.log_every(loader, len(loader) // 10, header):
+    for (inp, target) in metric_logger.log_every(loader, len(loader) // 1, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
         target = target.cuda(non_blocking=True)
@@ -175,7 +199,7 @@ def validate_network(val_loader, model, linear_classifier, args):
     labels = []
     choices = []
 
-    for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 2, header):
+    for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 1, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
         target = target.cuda(non_blocking=True)
@@ -190,9 +214,7 @@ def validate_network(val_loader, model, linear_classifier, args):
         output = linear_classifier(output)
         loss = nn.CrossEntropyLoss()(output, target)
 
-        print(output.shape)
         choice = torch.argmax(output, dim=1)
-        print(choice.shape)
         labels.append(target)
         choices.append(choice)
 
@@ -251,20 +273,21 @@ if __name__ == '__main__':
     parser.add_argument("--checkpoint_key", default="student", type=str, help='Key to use in the checkpoint (example: "teacher")')
     parser.add_argument('--epochs', default=100, type=int, help='Number of epochs of training.')
     parser.add_argument("--lr", default=0.0005, type=float, help="""Learning rate at the beginning of training (highest LR used during training).""")
-    parser.add_argument('--batch_size_per_gpu', default=128, type=int, help='Per-GPU batch-size')
+    parser.add_argument('--batch_size', default=1024, type=int, help='total batch-size')
     parser.add_argument("--dist_url", default="env://", type=str, help="""url used to set up distributed training; see https://pytorch.org/docs/stable/distributed.html""")
     parser.add_argument("--local_rank", default=0, type=int, help="Please ignore and do not set this argument.")
 
     # dataset arguments
     parser.add_argument('--train_data_path', default='', type=str)
     parser.add_argument('--val_data_path', default='', type=str)
+    parser.add_argument('--split', default=False, action='store_true', help='whether to manually split dataset into train-val')
+    parser.add_argument('--subsample', default=False, action='store_true', help='whether to subsample the data')
 
     # misc
     parser.add_argument('--num_workers', default=1, type=int, help='Number of data loading workers per GPU.')
     parser.add_argument('--val_freq', default=1, type=int, help="Epoch frequency for validation.")
     parser.add_argument('--output_dir', default=".", help='Path to save logs and checkpoints')
     parser.add_argument('--num_labels', default=1000, type=int, help='Number of labels for linear classifier')
-    parser.add_argument('--evaluate', dest='evaluate', action='store_true', help='evaluate model on validation set')
     parser.add_argument("--save_prefix", default="", type=str, help="""prefix for saving checkpoint and log files""")
 
     args = parser.parse_args()
