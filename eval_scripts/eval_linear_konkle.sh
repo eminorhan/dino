@@ -36,11 +36,10 @@ python -u /scratch/eo41/dino/eval_linear.py \
 	--epochs 500 \
 	--num_workers 4 \
 	--lr 0.0005 \
-	--output_dir "/scratch/eo41/dino/evals/labeled_s" \
-	--train_data_path "/vast/eo41/data/labeled_s" \
+	--output_dir "/scratch/eo41/dino/evals/konkle" \
+	--train_data_path "/vast/eo41/data/konkle" \
 	--val_data_path "" \
-	--num_labels 26 \
-	--split \
-	--subsample
+	--num_labels 240 \
+	--split
 	
 echo "Done"

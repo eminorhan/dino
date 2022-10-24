@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --gres=gpu:a100:1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=16
 #SBATCH --mem=240GB
 #SBATCH --time=48:00:00
 #SBATCH --job-name=dino_eval_linear
@@ -10,8 +10,6 @@
 
 module purge
 module load cuda/11.3.1
-
-# for reasons, this should only be run on a single gpu with num_workers=1 for now. I'm sorry.
 
 MODELS=(vitb14 vitl16 vitl16 vitl16 vitl16 vitb16 vitb16 vitb16 vitb16 vits16 vits16 vits16 vits16)
 SUBJECTS=(say say s a y say s a y say s a y)
@@ -25,22 +23,20 @@ echo $MODEL
 echo $SUBJECT
 echo $ARCH
 
-# labeled_s
+# ecoset
 python -u /scratch/eo41/dino/eval_linear.py \
 	--arch $ARCH \
 	--patch_size 14 \
-	--pretrained_weights /scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth \
-	--save_prefix random_${MODEL} \
+	--pretrained_weights '' \
+	--save_prefix imagenet_${MODEL} \
 	--checkpoint_key "teacher" \
 	--batch_size 1024 \
 	--epochs 500 \
-	--num_workers 4 \
+	--num_workers 16 \
 	--lr 0.0005 \
-	--output_dir "/scratch/eo41/dino/evals/labeled_s" \
-	--train_data_path "/vast/eo41/data/labeled_s" \
-	--val_data_path "" \
-	--num_labels 26 \
-	--split \
-	--subsample
+	--output_dir "/scratch/eo41/dino/evals/ecoset" \
+	--train_data_path "/vast/eo41/data/ecoset/train" \
+	--val_data_path "/vast/eo41/data/ecoset/val" \
+	--num_labels 565
 	
 echo "Done"

@@ -44,7 +44,7 @@ def eval_linear(args):
     model.eval()
 
     # load weights to evaluate
-    utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
+    # utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
     print(f"Model {args.arch} built.")
 
     linear_classifier = LinearClassifier(embed_dim, num_labels=args.num_labels)
@@ -105,6 +105,8 @@ def eval_linear(args):
         print(f"Data loaded with {len(train_dataset)} train and {len(val_dataset)} val imgs.")
         print(f"{len(train_loader)} train and {len(val_loader)} val iterations per epoch.")
     # ============ done data ... ============
+
+    print('Class names:', val_dataset.classes)
 
     # set optimizer
     optimizer = torch.optim.Adam(linear_classifier.parameters(), args.lr)

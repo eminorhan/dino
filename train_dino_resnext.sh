@@ -1,6 +1,5 @@
 #!/bin/bash
 
-##SBATCH --account=cds
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:a100:4
