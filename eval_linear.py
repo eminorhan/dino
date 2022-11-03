@@ -16,7 +16,6 @@ from torch.utils.data import DataLoader
 import dino_utils as utils
 import vision_transformer as vits
 
-
 def eval_linear(args):
     print("git:\n  {}\n".format(utils.get_sha()))
     print("\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items())))
@@ -44,8 +43,11 @@ def eval_linear(args):
     model.eval()
 
     # load weights to evaluate
-    # utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
-    print(f"Model {args.arch} built.")
+    if not args.save_prefix.startswith("random"): 
+        utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
+        print(f"Model {args.arch} built. Loaded checkpoint at {args.pretrained_weights}.")
+    else:
+        print(f"Model {args.arch} built. Using random (untrained) weights.")
 
     linear_classifier = LinearClassifier(embed_dim, num_labels=args.num_labels)
     linear_classifier = linear_classifier.cuda()
@@ -106,10 +108,10 @@ def eval_linear(args):
         print(f"{len(train_loader)} train and {len(val_loader)} val iterations per epoch.")
     # ============ done data ... ============
 
-    print('Class names:', val_dataset.classes)
+    print('Class names:', train_dataset.classes)
 
     # set optimizer
-    optimizer = torch.optim.Adam(linear_classifier.parameters(), args.lr)
+    optimizer = torch.optim.Adam(linear_classifier.parameters(), lr=args.lr)
 
     # Optionally resume from a checkpoint
     to_restore = {"epoch": 0, "best_acc": 0.}
@@ -201,10 +203,19 @@ def validate_network(val_loader, model, linear_classifier, args):
     labels = []
     choices = []
 
+    task = os.path.split(args.output_dir)[-1]
+    if  task == 'places365':
+        places365_val_labels = torch.from_numpy(np.load('places365_val_labels.npz')['labels'])
+        iter = 0
+
     for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 1, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
-        target = target.cuda(non_blocking=True)
+        if task== 'places365':
+            target = places365_val_labels[iter*target.size(0):(iter+1)*target.size(0)]
+            target = target.cuda(non_blocking=True)
+        else:
+            target = target.cuda(non_blocking=True)
 
         # forward
         with torch.no_grad():
