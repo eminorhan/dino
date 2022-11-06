@@ -206,14 +206,15 @@ def validate_network(val_loader, model, linear_classifier, args):
     task = os.path.split(args.output_dir)[-1]
     if  task == 'places365':
         places365_val_labels = torch.from_numpy(np.load('places365_val_labels.npz')['labels'])
-        iter = 0
+        it = 0
 
     for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 1, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
         if task== 'places365':
-            target = places365_val_labels[iter*target.size(0):(iter+1)*target.size(0)]
+            target = places365_val_labels[it*target.size(0):(it+1)*target.size(0)]
             target = target.cuda(non_blocking=True)
+            it += 1
         else:
             target = target.cuda(non_blocking=True)
 
