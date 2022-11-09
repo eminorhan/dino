@@ -6,7 +6,7 @@
 #SBATCH --time=48:00:00
 #SBATCH --job-name=dino_lin_places365
 #SBATCH --output=dino_lin_places365_%A_%a.out
-#SBATCH --array=10-24
+#SBATCH --array=11-24
 
 module purge
 module load cuda/11.3.1

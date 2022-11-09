@@ -17,11 +17,33 @@ export WORLD_SIZE=4
 module purge
 module load cuda/11.3.1
 
+# vit
+#srun python -u /scratch/eo41/dino/train_dino.py \
+#	--use_fp16 false \
+#	--arch "vit_large" \
+#	--patch_size 16 \
+#	--batch_size_per_gpu 52 \
+#	--num_workers 8 \
+#	--freeze_last_layer 0 \
+#	--lr 0.0001 \
+#	--min_lr 0.0001 \
+#	--global_crops_scale 0.2 1 \
+#	--local_crops_scale 0.05 0.2 \
+#	--optimizer adamw \
+#	--weight_decay 0.0 \
+#	--weight_decay_end 0.0 \
+#	--clip_grad 1.0 \
+#	--saveckp_freq 10000 \
+#	--print_freq 10000 \
+#	--output_dir "/vast/eo41/sayavakepicutego4d_models" \
+#	--data_path "/vast/eo41/sayavakepicutego4d/sayavakepicutego4d_{000000..000017}.tar" \
+#	--save_prefix "sayavakepicutego4d_vitl16"
+
+# resnext
 srun python -u /scratch/eo41/dino/train_dino.py \
 	--use_fp16 false \
-	--arch "vit_large" \
-	--patch_size 16 \
-	--batch_size_per_gpu 52 \
+	--arch "resnext50_32x4d" \
+	--batch_size_per_gpu 128 \
 	--num_workers 8 \
 	--freeze_last_layer 0 \
 	--lr 0.0001 \
@@ -36,6 +58,6 @@ srun python -u /scratch/eo41/dino/train_dino.py \
 	--print_freq 10000 \
 	--output_dir "/vast/eo41/sayavakepicutego4d_models" \
 	--data_path "/vast/eo41/sayavakepicutego4d/sayavakepicutego4d_{000000..000017}.tar" \
-	--save_prefix "sayavakepicutego4d_vitl16"
-				
+	--save_prefix "sayavakepicutego4d_resnext50"
+
 echo "Done"
