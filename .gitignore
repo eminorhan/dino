@@ -5,6 +5,7 @@
 *.tar
 *.npz
 *.out
+*.jpg
 
 # Directories
 **/__pycache__/

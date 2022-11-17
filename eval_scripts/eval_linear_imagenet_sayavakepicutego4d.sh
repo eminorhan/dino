@@ -11,10 +11,10 @@
 module purge
 module load cuda/11.3.1
 
-MODELS=(vitl16 vitl16 vitl16 vitl16 vitb16 vitb16 vitb16 vitb16 vits16 vits16 vits16 vits16)
-SUBJECTS=(sayavakepicutego4d_100 sayavakepicutego4d_10_1 sayavakepicutego4d_10_2 sayavakepicutego4d_10_3)
-ARCHS=(vit_large vit_large vit_large vit_large vit_base vit_base vit_base vit_base vit_small vit_small vit_small vit_small)
-PATCHES=(16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16)
+MODELS=(resnext50 vitl16 vitl16 vitl16 vitl16 vitb16 vitb16 vitb16 vitb16 vits16 vits16 vits16 vits16)
+SUBJECTS=(sayavakepicutego4d sayavakepicutego4d sayavakepicutego4d_10_1 sayavakepicutego4d_10_2 sayavakepicutego4d_10_3)
+ARCHS=(resnext50_32x4d vit_large vit_large vit_large vit_large vit_base vit_base vit_base vit_base vit_small vit_small vit_small vit_small)
+PATCHES=(16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16 16)
 
 MODEL=${MODELS[$SLURM_ARRAY_TASK_ID]}
 SUBJECT=${SUBJECTS[$SLURM_ARRAY_TASK_ID]}

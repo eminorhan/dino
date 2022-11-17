@@ -8,7 +8,7 @@
 #SBATCH --time=48:00:00
 #SBATCH --job-name=dino_train_sayavakepicutego4d
 #SBATCH --output=dino_train_sayavakepicutego4d_%A_%a.out
-#SBATCH --array=1-12
+#SBATCH --array=0
 
 export MASTER_ADDR=$(hostname -s)
 export MASTER_PORT=$(shuf -i 10000-65500 -n 1)

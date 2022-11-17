@@ -69,15 +69,6 @@ class Solarization(object):
             return img
 
 
-# class WebDatasetWithLength(wds.WebDataset):
-#     def __init__(self, *args, length=None, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.length = length
-
-#     def __len__(self):
-#         return self.length    
-
-
 def identity(x):
     return x
 
