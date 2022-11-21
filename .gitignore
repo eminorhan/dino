@@ -6,6 +6,7 @@
 *.npz
 *.out
 *.jpg
+*.png
 
 # Directories
 **/__pycache__/
