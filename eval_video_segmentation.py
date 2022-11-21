@@ -249,15 +249,17 @@ def color_normalize(x, mean=[0.485, 0.456, 0.406], std=[0.228, 0.224, 0.225]):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Evaluation with video object segmentation on DAVIS 2017')
     parser.add_argument('--pretrained_weights', default='', type=str, help="Path to pretrained weights to evaluate.")
-    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_tiny', 'vit_small', 'vit_base'], help='Architecture (support only ViT atm).')
+    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_tiny', 'vit_small', 'vit_base', 'vit_large'], help='Architecture (support only ViT atm).')
     parser.add_argument('--patch_size', default=16, type=int, help='Patch resolution of the model.')
     parser.add_argument("--checkpoint_key", default="teacher", type=str, help='Key to use in the checkpoint (example: "teacher")')
     parser.add_argument('--output_dir', default=".", help='Path where to save segmentations')
     parser.add_argument('--data_path', default='/path/to/davis/', type=str)
+    parser.add_argument("--save_prefix", default="", type=str, help="""prefix for saving checkpoint and log files""")
+
     parser.add_argument("--n_last_frames", type=int, default=7, help="number of preceeding frames")
     parser.add_argument("--size_mask_neighborhood", default=12, type=int, help="We restrict the set of source nodes considered to a spatial neighborhood of query node")
     parser.add_argument("--topk", type=int, default=5, help="accumulate label from top k neighbors")
-    parser.add_argument("--bs", type=int, default=6, help="Batch size, try to reduce if OOM")
+    parser.add_argument("--bs", type=int, default=16, help="Batch size, try to reduce if OOM")
     args = parser.parse_args()
 
     print("git:\n  {}\n".format(utils.get_sha()))
@@ -267,7 +269,13 @@ if __name__ == '__main__':
     model = vits.__dict__[args.arch](patch_size=args.patch_size, num_classes=0)
     print(f"Model {args.arch} {args.patch_size}x{args.patch_size} built.")
     model.cuda()
-    utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
+    # load weights to evaluate
+    if not args.save_prefix.startswith("random"): 
+        utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
+        print(f"Model {args.arch} built. Loaded checkpoint at {args.pretrained_weights}.")
+    else:
+        print(f"Model {args.arch} built. Using random (untrained) weights.")
+
     for param in model.parameters():
         param.requires_grad = False
     model.eval()

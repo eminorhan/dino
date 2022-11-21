@@ -3,10 +3,10 @@
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=240GB
-#SBATCH --time=8:00:00
+#SBATCH --time=9:00:00
 #SBATCH --job-name=dino_lin_core50
 #SBATCH --output=dino_lin_core50_%A_%a.out
-#SBATCH --array=0
+#SBATCH --array=0-24
 
 module purge
 module load cuda/11.3.1
@@ -34,7 +34,7 @@ python -u /scratch/eo41/dino/eval_linear.py \
 	--save_prefix ${SUBJECT}_${MODEL} \
 	--checkpoint_key "teacher" \
 	--batch_size 1024 \
-	--epochs 30 \
+	--epochs 50 \
 	--num_workers 8 \
 	--lr 0.0005 \
 	--output_dir "/scratch/eo41/dino/evals/core50" \
