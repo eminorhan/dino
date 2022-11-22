@@ -269,6 +269,7 @@ if __name__ == '__main__':
     model = vits.__dict__[args.arch](patch_size=args.patch_size, num_classes=0)
     print(f"Model {args.arch} {args.patch_size}x{args.patch_size} built.")
     model.cuda()
+    
     # load weights to evaluate
     if not args.save_prefix.startswith("random"): 
         utils.load_pretrained_weights(model, args.pretrained_weights, args.checkpoint_key, args.arch, args.patch_size)
