@@ -166,16 +166,7 @@ class VideoGenerator:
 
             # we keep only the output patch attention
             attentions = attentions[0, :, 0, 1:].reshape(nh, -1)
-
-            # we keep only a certain percentage of the mass
-            val, idx = torch.sort(attentions)
-            val /= torch.sum(val, dim=1, keepdim=True)
-            cumval = torch.cumsum(val, dim=1)
-            th_attn = cumval > (1 - self.args.threshold)
-            idx2 = torch.argsort(idx)
-            for head in range(nh):
-                th_attn[head] = th_attn[head][idx2[head]]
-            th_attn = th_attn.reshape(nh, w_featmap, h_featmap).float()
+            
             # interpolate
             th_attn = (nn.functional.interpolate(th_attn.unsqueeze(0), scale_factor=self.args.patch_size, mode="nearest")[0].cpu().numpy())
 
@@ -187,7 +178,7 @@ class VideoGenerator:
             plt.imsave(
                 fname=fname,
                 arr=attentions[self.args.head_idx],  # sum(attentions[i] * 1 / attentions.shape[0] for i in range(attentions.shape[0])),
-                cmap="inferno",
+                cmap="jet",
                 format="jpg",
             )
 
@@ -236,7 +227,6 @@ def parse_args():
     parser.add_argument("--checkpoint_key", default="teacher", type=str, help='Key to use in the checkpoint (example: "teacher")')
     parser.add_argument("--input_path", required=True, type=str, help="""Path to a video file if you want to extract frames or to a folder of images already extracted by yourself.""")
     parser.add_argument("--output_path", default="./", type=str, help="""Path to store a folder of frames or a folder of attention images or a final video. Defaults to current directory.""")
-    parser.add_argument("--threshold", type=float, default=0.6, help="""We visualize masks obtained by thresholding the self-attention maps to keep xx percent of the mass.""")
     parser.add_argument("--resize", default=None, type=int, nargs="+", help="""Apply a resize transformation to input image(s). Use if OOM error. Usage (single or W H): --resize 512, --resize 720 1280""")
     parser.add_argument("--video_only", action="store_true", help="""Use this flag if you only want to generate a video and not all attention images. If used, --input_path must be set to the folder of attention images. Ex: ./attention/""")
     parser.add_argument("--fps", default=30.0, type=float, help="FPS of input/output video. Automatically set if you extract frames from a video.")

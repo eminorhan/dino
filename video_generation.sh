@@ -25,7 +25,7 @@ srun python -u /scratch/eo41/dino/video_generation.py \
 	--resize 1400 \
 	--input_path "video_atts/output/frames" \
 	--output_path "video_atts/output/" \
-	--head_idx 2 \
+	--head_idx 11 \
 	--save_prefix "y_2"
 				
 echo "Done"
