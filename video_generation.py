@@ -168,8 +168,6 @@ class VideoGenerator:
             attentions = attentions[0, :, 0, 1:].reshape(nh, -1)
             
             # interpolate
-            th_attn = (nn.functional.interpolate(th_attn.unsqueeze(0), scale_factor=self.args.patch_size, mode="nearest")[0].cpu().numpy())
-
             attentions = attentions.reshape(nh, w_featmap, h_featmap)
             attentions = (nn.functional.interpolate(attentions.unsqueeze(0), scale_factor=self.args.patch_size, mode="nearest")[0].cpu().numpy())
 

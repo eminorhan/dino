@@ -8,7 +8,7 @@
 #SBATCH --time=03:50:00
 #SBATCH --job-name=video_generation
 #SBATCH --output=video_generation_%A_%a.out
-#SBATCH --array=0
+#SBATCH --array=0-11
 
 export MASTER_ADDR=$(hostname -s)
 export MASTER_PORT=$(shuf -i 10000-65500 -n 1)
@@ -25,7 +25,7 @@ srun python -u /scratch/eo41/dino/video_generation.py \
 	--resize 1400 \
 	--input_path "video_atts/output/frames" \
 	--output_path "video_atts/output/" \
-	--head_idx 11 \
+	--head_idx $SLURM_ARRAY_TASK_ID \
 	--save_prefix "y_2"
 				
 echo "Done"
