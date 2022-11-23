@@ -80,7 +80,7 @@ def get_args_parser():
     parser.add_argument('--output_dir', default=".", type=str, help='Path to save logs and checkpoints.')
     parser.add_argument('--saveckp_freq', default=10000, type=int, help='Save checkpoint every x iterations.')
     parser.add_argument('--print_freq', default=10000, type=int, help='Print progress every x iterations.')
-    parser.add_argument('--seed', default=42, type=int, help='Random seed.')
+    parser.add_argument('--seed', default=0, type=int, help='Random seed.')
     parser.add_argument('--num_workers', default=4, type=int, help='Number of data loading workers per GPU.')
     parser.add_argument("--dist_url", default="env://", type=str, help='url used to set up distributed training')
     parser.add_argument("--local_rank", default=0, type=int, help="Please ignore and do not set this argument.")

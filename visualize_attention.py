@@ -196,13 +196,18 @@ if __name__ == '__main__':
         # interpolate
         th_attn = nn.functional.interpolate(th_attn.unsqueeze(0), scale_factor=args.patch_size, mode="nearest")[0].cpu().numpy()
 
-    attentions = attentions.reshape(nh, w_featmap, h_featmap)
-    attentions = nn.functional.interpolate(attentions.unsqueeze(0), scale_factor=args.patch_size, mode="nearest")[0].cpu().numpy()
+    # attentions = attentions.reshape(nh, w_featmap, h_featmap)
+    # attentions = nn.functional.interpolate(attentions.unsqueeze(0), scale_factor=args.patch_size, mode="nearest")[0].cpu().numpy()
     
-    new_attentions = torch.zeros(nh, 3, 1600, 1600)
-    new_attentions[:, 0, :, :] = torch.from_numpy(attentions)
-    new_attentions[:, 1, :, :] = torch.from_numpy(attentions)
-    new_attentions[:, 2, :, :] = torch.from_numpy(attentions)
+    colors = random_colors(nh, bright=True)
+    new_attentions = torch.zeros(nh, 3, w_featmap, h_featmap)
+
+    for i in range(nh):
+        new_attentions[i, 0, :, :] = colors[i][0] * torch.from_numpy(th_attentions)
+        new_attentions[i, 1, :, :] = colors[i][1] * torch.from_numpy(th_attentions)
+        new_attentions[i, 2, :, :] = colors[i][2] * torch.from_numpy(th_attentions)
+
+    # all heads in one
 
     display_tensor = torch.cat((img, new_attentions))
     print(display_tensor.shape)

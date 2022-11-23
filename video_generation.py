@@ -49,48 +49,30 @@ class VideoGenerator:
             sys.exit(1)
         else:
             if self.args.video_only:
-                self._generate_video_from_images(
-                    self.args.input_path, self.args.output_path
-                )
+                self._generate_video_from_images(self.args.input_path, self.args.output_path)
             else:
                 # If input path exists
                 if os.path.exists(self.args.input_path):
                     # If input is a video file
                     if os.path.isfile(self.args.input_path):
-                        frames_folder = os.path.join(self.args.output_path, "frames")
-                        attention_folder = os.path.join(
-                            self.args.output_path, "attention"
-                        )
+                        frames_folder = os.path.join(self.args.output_path, self.args.save_prefix + "_frames")
+                        attention_folder = os.path.join(self.args.output_path, self.args.save_prefix + "_attention_h" + str(self.args.head_idx))
 
                         os.makedirs(frames_folder, exist_ok=True)
                         os.makedirs(attention_folder, exist_ok=True)
 
-                        self._extract_frames_from_video(
-                            self.args.input_path, frames_folder
-                        )
-
-                        self._inference(
-                            frames_folder,
-                            attention_folder,
-                        )
-
-                        self._generate_video_from_images(
-                            attention_folder, self.args.output_path
-                        )
+                        self._extract_frames_from_video(self.args.input_path, frames_folder)
+                        self._inference(frames_folder, attention_folder)
+                        self._generate_video_from_images(attention_folder, self.args.output_path)
 
                     # If input is a folder of already extracted frames
                     if os.path.isdir(self.args.input_path):
-                        attention_folder = os.path.join(
-                            self.args.output_path, "attention"
-                        )
+                        attention_folder = os.path.join(self.args.output_path, self.args.save_prefix + "_attention_h" + str(self.args.head_idx))
 
                         os.makedirs(attention_folder, exist_ok=True)
 
                         self._inference(self.args.input_path, attention_folder)
-
-                        self._generate_video_from_images(
-                            attention_folder, self.args.output_path
-                        )
+                        self._generate_video_from_images(attention_folder, self.args.output_path)
 
                 # If input path doesn't exists
                 else:
@@ -107,10 +89,7 @@ class VideoGenerator:
         success, image = vidcap.read()
         count = 0
         while success:
-            cv2.imwrite(
-                os.path.join(out, f"frame-{count:04}.jpg"),
-                image,
-            )
+            cv2.imwrite(os.path.join(out, f"frame-{count:04}.jpg"), image)
             success, image = vidcap.read()
             count += 1
 
@@ -134,7 +113,7 @@ class VideoGenerator:
                 img_array.append(cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR))
 
         out = cv2.VideoWriter(
-            os.path.join(out, "video." + self.args.video_format),
+            os.path.join(out, self.args.save_prefix + "_video_h" + str(self.args.head_idx) + "." + self.args.video_format),
             FOURCC[self.args.video_format],
             self.args.fps,
             size,
@@ -158,18 +137,14 @@ class VideoGenerator:
                     [
                         pth_transforms.ToTensor(),
                         pth_transforms.Resize(self.args.resize),
-                        pth_transforms.Normalize(
-                            (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
-                        ),
+                        pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
                     ]
                 )
             else:
                 transform = pth_transforms.Compose(
                     [
                         pth_transforms.ToTensor(),
-                        pth_transforms.Normalize(
-                            (0.485, 0.456, 0.406), (0.229, 0.224, 0.225)
-                        ),
+                        pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
                     ]
                 )
 
@@ -202,44 +177,23 @@ class VideoGenerator:
                 th_attn[head] = th_attn[head][idx2[head]]
             th_attn = th_attn.reshape(nh, w_featmap, h_featmap).float()
             # interpolate
-            th_attn = (
-                nn.functional.interpolate(
-                    th_attn.unsqueeze(0),
-                    scale_factor=self.args.patch_size,
-                    mode="nearest",
-                )[0]
-                .cpu()
-                .numpy()
-            )
+            th_attn = (nn.functional.interpolate(th_attn.unsqueeze(0), scale_factor=self.args.patch_size, mode="nearest")[0].cpu().numpy())
 
             attentions = attentions.reshape(nh, w_featmap, h_featmap)
-            attentions = (
-                nn.functional.interpolate(
-                    attentions.unsqueeze(0),
-                    scale_factor=self.args.patch_size,
-                    mode="nearest",
-                )[0]
-                .cpu()
-                .numpy()
-            )
+            attentions = (nn.functional.interpolate(attentions.unsqueeze(0), scale_factor=self.args.patch_size, mode="nearest")[0].cpu().numpy())
 
             # save attentions heatmaps
             fname = os.path.join(out, "attn-" + os.path.basename(img_path))
             plt.imsave(
                 fname=fname,
-                arr=sum(
-                    attentions[i] * 1 / attentions.shape[0]
-                    for i in range(attentions.shape[0])
-                ),
+                arr=attentions[self.args.head_idx],  # sum(attentions[i] * 1 / attentions.shape[0] for i in range(attentions.shape[0])),
                 cmap="inferno",
                 format="jpg",
             )
 
     def __load_model(self):
         # build model
-        model = vits.__dict__[self.args.arch](
-            patch_size=self.args.patch_size, num_classes=0
-        )
+        model = vits.__dict__[self.args.arch](patch_size=self.args.patch_size, num_classes=0)
         for p in model.parameters():
             p.requires_grad = False
         model.eval()
@@ -287,6 +241,8 @@ def parse_args():
     parser.add_argument("--video_only", action="store_true", help="""Use this flag if you only want to generate a video and not all attention images. If used, --input_path must be set to the folder of attention images. Ex: ./attention/""")
     parser.add_argument("--fps", default=30.0, type=float, help="FPS of input/output video. Automatically set if you extract frames from a video.")
     parser.add_argument("--video_format", default="mp4", type=str, choices=["mp4", "avi"], help="Format of generated video (mp4 or avi).")
+    parser.add_argument('--head_idx', default=0, type=int, help='Attention head index.')
+    parser.add_argument("--save_prefix", default="", type=str, help="""prefix for saving""")
 
     return parser.parse_args()
 
