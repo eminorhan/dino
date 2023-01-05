@@ -95,7 +95,7 @@ class VideoGenerator:
 
     def _generate_video_from_images(self, inp: str, out: str):
         img_array = []
-        attention_images_list = sorted(glob.glob(os.path.join(inp, "attn-*.jpg")))
+        attention_images_list = sorted(glob.glob(os.path.join(inp, "*.jpg")))
 
         # Get size of the first image
         with open(attention_images_list[0], "rb") as f:

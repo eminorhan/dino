@@ -6,7 +6,7 @@
 #SBATCH --time=12:00:00
 #SBATCH --job-name=dino_lin_imagenet_sayavakepicutego4d
 #SBATCH --output=dino_lin_imagenet_sayavakepicutego4d_%A_%a.out
-#SBATCH --array=0
+#SBATCH --array=1
 
 module purge
 module load cuda/11.3.1
@@ -30,7 +30,7 @@ echo $PATCH
 python -u /scratch/eo41/dino/eval_linear.py \
 	--arch ${ARCH} \
 	--patch_size ${PATCH} \
-	--pretrained_weights "/vast/eo41/sayavakepicutego4d_models/${SUBJECT}_${MODEL}_checkpoint.pth" \
+	--pretrained_weights "/vast/eo41/sayavakepicutego4d_models/dino_vitl16/${SUBJECT}_${MODEL}_checkpoint.pth" \
 	--save_prefix ${SUBJECT}_${MODEL} \
 	--checkpoint_key "teacher" \
 	--batch_size 1024 \

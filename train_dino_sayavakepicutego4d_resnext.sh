@@ -72,7 +72,7 @@ srun python -u /scratch/eo41/dino/train_dino.py \
 	--clip_grad 1.0 \
 	--saveckp_freq 10000 \
 	--print_freq 10000 \
-	--output_dir "/vast/eo41/sayavakepicutego4d_models" \
+	--output_dir "/vast/eo41/sayavakepicutego4d_models/dino_resnext50" \
 	--data_path "/vast/eo41/sayavakepicutego4d/${DATA}.tar" \
 	--save_prefix "${SAVE}_resnext50"
 

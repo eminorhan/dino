@@ -31,7 +31,6 @@ import torch
 from torch import nn
 import torch.distributed as dist
 from PIL import ImageFilter, ImageOps
-# import webdataset as wds
 
 
 class GaussianBlur(object):
@@ -48,11 +47,7 @@ class GaussianBlur(object):
         if not do_it:
             return img
 
-        return img.filter(
-            ImageFilter.GaussianBlur(
-                radius=random.uniform(self.radius_min, self.radius_max)
-            )
-        )
+        return img.filter(ImageFilter.GaussianBlur(radius=random.uniform(self.radius_min, self.radius_max)))
 
 
 class Solarization(object):
