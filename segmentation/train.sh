@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#SBATCH --gres=gpu:rtx8000:1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=200GB
-#SBATCH --time=08:00:00
+#SBATCH --gres=gpu:a100:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=123GB
+#SBATCH --time=06:00:00
 #SBATCH --job-name=train_coco
 #SBATCH --output=train_coco_%A_%a.out
 #SBATCH --array=1
@@ -28,16 +28,17 @@ echo $PATCH
 
 python -u train.py \
 	--dataset coco \
-	--data-path '/vast/eo41/data/coco' \
+	--data_path '/vast/eo41/data/coco' \
 	--arch ${ARCH} \
 	--patch_size ${PATCH} \
 	--pretrained_weights "/scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth" \
 	--save_prefix ${SUBJECT}_${MODEL} \
 	--checkpoint_key "teacher" \
-	--output_dir "/scratch/eo41/dino/detection/evals/coco" \
-	--epochs 2 \
-	--batch-size 8 \
-	--lr 0.0001 \
-	--aspect-ratio-group-factor 3
+	--output_dir "/scratch/eo41/dino/segmentation/evals/coco" \
+	--epochs 10 \
+	--batch_size 32 \
+	--lr 0.0003 \
+	--workers 16 \
+	--aux_loss
 
 echo "Done"

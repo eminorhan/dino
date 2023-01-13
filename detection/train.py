@@ -19,6 +19,7 @@ the number of epochs should be adapted so that we have the same number of iterat
 """
 import datetime
 import os
+import sys
 import time
 
 import presets
@@ -27,13 +28,73 @@ import torch.utils.data
 import torchvision
 import torchvision.models.detection
 import torchvision.models.detection.mask_rcnn
+from torchvision.models.detection.anchor_utils import AnchorGenerator
 import utils
 from coco_utils import get_coco, get_coco_kp
 from engine import evaluate, train_one_epoch
 from group_by_aspect_ratio import create_aspect_ratio_groups, GroupedBatchSampler
 from torchvision.transforms import InterpolationMode
 from transforms import SimpleCopyPaste
+from torchvision.models.detection.mask_rcnn import MaskRCNN, MaskRCNNHeads
+from torchvision.models.detection.rpn import RPNHead
+from torchvision.models.detection.faster_rcnn import FastRCNNConvFCHead
 
+sys.path.insert(0, os.path.abspath('..'))
+import vision_transformer as vits
+
+### vit pretrained model loading utilities
+def load_pretrained_weights(model, pretrained_weights, checkpoint_key):
+    if os.path.isfile(pretrained_weights):
+        state_dict = torch.load(pretrained_weights, map_location="cpu")
+        if checkpoint_key is not None and checkpoint_key in state_dict:
+            print(f"Take key {checkpoint_key} in provided checkpoint dict")
+            state_dict = state_dict[checkpoint_key]
+        # remove `module.` prefix
+        state_dict = {k.replace("module.", ""): v for k, v in state_dict.items()}
+        # remove `backbone.` prefix induced by multicrop wrapper
+        state_dict = {k.replace("backbone.", ""): v for k, v in state_dict.items()}
+        msg = model.load_state_dict(state_dict, strict=False)
+        print('Pretrained weights found at {} and loaded with msg: {}'.format(pretrained_weights, msg))
+    else:
+        print("There is no reference weights available for this model => We use random weights.")
+
+class vit_maskrcnn_backbone(torch.nn.Module):
+    def __init__(self, arch, patch_size, pretrained_weights, checkpoint_key):
+        super().__init__()
+
+        self.patch_size = patch_size
+        self.backbone = vits.__dict__[arch](patch_size=patch_size, num_classes=0)
+        if pretrained_weights is not None:
+            load_pretrained_weights(self.backbone, pretrained_weights, checkpoint_key)
+        self.out_channels = self.backbone.embed_dim
+
+    def forward(self, x):
+        o = self.backbone.get_intermediate_layers(x)[0]
+        o = torch.permute(o, (0, 2, 1))  # batch x channel x flattened spatial dimensions
+        o = o[:, :, 1:]
+        w_fmap = x.shape[-2] // self.patch_size
+        h_fmap = x.shape[-1] // self.patch_size
+        o = o.reshape((o.shape[0], o.shape[1], w_fmap, h_fmap))  # batch x channel x width x height
+        return o
+
+class LinearHead(torch.nn.Module):
+    """
+    Linear head for FPN-based models
+    Args:
+        in_channels (int): number of input channels
+        representation_size (int): size of the intermediate representation
+    """
+    def __init__(self, in_channels, representation_size):
+        super().__init__()
+
+        self.fc6 = torch.nn.Linear(in_channels, representation_size, bias=True)
+
+    def forward(self, x):
+        x = x.flatten(start_dim=1)
+        x = self.fc6(x)
+        return x
+
+### ###################################################################################################
 
 def copypaste_collate_fn(batch):
     copypaste = SimpleCopyPaste(blending=True, resize_interpolation=InterpolationMode.BILINEAR)
@@ -51,10 +112,6 @@ def get_dataset(name, image_set, transform, data_path):
 def get_transform(train, args):
     if train:
         return presets.DetectionPresetTrain(data_augmentation=args.data_augmentation)
-    elif args.weights and args.test_only:
-        weights = torchvision.models.get_weight(args.weights)
-        trans = weights.transforms()
-        return lambda img, target: (trans(img), target)
     else:
         return presets.DetectionPresetEval()
 
@@ -67,12 +124,11 @@ def get_args_parser(add_help=True):
     # basics
     parser.add_argument("--data-path", default="", type=str, help="dataset path")
     parser.add_argument("--dataset", default="coco", type=str, help="dataset name")
-    parser.add_argument("--model", default="maskrcnn_resnet50_fpn", type=str, help="model name")
     parser.add_argument("--device", default="cuda", type=str, help="device (Use cuda or cpu Default: cuda)")
     parser.add_argument("--batch-size", default=2, type=int, help="images per gpu, the total batch size is $NGPU x batch_size")
     parser.add_argument("--epochs", default=26, type=int, metavar="N", help="number of total epochs to run")
     parser.add_argument("--workers", default=4, type=int, metavar="N", help="number of data loading workers (default: 4)")
-    parser.add_argument("--print-freq", default=20, type=int, help="print frequency")
+    parser.add_argument("--print-freq", default=600, type=int, help="print frequency")
     parser.add_argument("--output-dir", default=".", type=str, help="path to save outputs")
     parser.add_argument("--resume", default="", type=str, help="path of checkpoint")
     parser.add_argument("--start_epoch", default=0, type=int, help="start epoch")
@@ -82,21 +138,20 @@ def get_args_parser(add_help=True):
     parser.add_argument("--sync-bn", dest="sync_bn", help="Use sync batch norm", action="store_true")
     parser.add_argument("--test-only", dest="test_only", help="Only test the model", action="store_true")
     parser.add_argument("--use-deterministic-algorithms", action="store_true", help="Forces the use of deterministic algorithms only.")
+    parser.add_argument("--output_dir", default=".", help='Path to save logs and checkpoints')
+    parser.add_argument("--save_prefix", default="", type=str, help="""prefix for saving checkpoint and log files""")
+
+    # model params
+    parser.add_argument("--arch", default='vit_large', type=str, help='Architecture')
+    parser.add_argument("--patch_size", default=16, type=int, help='Patch resolution of the model.')
+    parser.add_argument("--pretrained_weights", default='', type=str, help="Path to pretrained weights to evaluate.")
+    parser.add_argument("--checkpoint_key", default="student", type=str, help='Key to use in the checkpoint (example: "teacher")')
 
     # optimizer parameters
-    parser.add_argument("--opt", default="sgd", type=str, help="optimizer")
-    parser.add_argument("--lr", default=0.02, type=float, help="initial learning rate, 0.02 is the default value for training on 8 gpus and 2 images_per_gpu")
-    parser.add_argument("--momentum", default=0.9, type=float, metavar="M", help="momentum")
-    parser.add_argument("--weight-decay", default=1e-4, type=float, metavar="W", help="weight decay (default: 1e-4)", dest="weight_decay")
+    parser.add_argument("--opt", default="Adam", type=str, help="optimizer")
+    parser.add_argument("--lr", default=0.0001, type=float, help="initial learning rate, 0.02 is the default value for training on 8 gpus and 2 images_per_gpu")
+    parser.add_argument("--weight-decay", default=0.0, type=float, metavar="W", help="weight decay (default: none)", dest="weight_decay")
     parser.add_argument("--norm-weight-decay", default=None, type=float, help="weight decay for Normalization layers (default: None, same value as --wd)")
-    parser.add_argument("--lr-scheduler", default="multisteplr", type=str, help="name of lr scheduler (default: multisteplr)")
-    parser.add_argument("--lr-step-size", default=8, type=int, help="decrease lr every step-size epochs (multisteplr scheduler only)")
-    parser.add_argument("--lr-steps", default=[16, 22], nargs="+", type=int, help="decrease lr every step-size epochs (multisteplr scheduler only)")
-    parser.add_argument("--lr-gamma", default=0.1, type=float, help="decrease lr by a factor of lr-gamma (multisteplr scheduler only)")
-
-    # distributed training parameters
-    parser.add_argument("--weights", default=None, type=str, help="the weights enum name to load")
-    parser.add_argument("--weights-backbone", default=None, type=str, help="the backbone weights enum name to load")
 
     # Mixed precision parameters
     parser.add_argument("--amp", action="store_true", help="Use torch.cuda.amp for mixed precision training")
@@ -143,7 +198,7 @@ def main(args):
 
     data_loader = torch.utils.data.DataLoader(dataset, batch_sampler=train_batch_sampler, num_workers=args.workers, collate_fn=train_collate_fn)
     data_loader_test = torch.utils.data.DataLoader(dataset_test, batch_size=1, sampler=test_sampler, num_workers=args.workers, collate_fn=utils.collate_fn)
-    print('Number of training images:', len(dataset), 'Number of training iterations per epoch:', len(data_loader))
+    print('Number of training images:', len(dataset), 'Number of training iterations per epoch:', len(data_loader), 'Number of classes:', num_classes)
     print('Number of test images:', len(dataset_test), 'Number of test iterations per epoch:', len(data_loader_test))
 
     # set up model
@@ -151,12 +206,55 @@ def main(args):
     kwargs = {"trainable_backbone_layers": args.trainable_backbone_layers}
     if args.data_augmentation in ["multiscale", "lsj"]:
         kwargs["_skip_resize"] = True
-    if "rcnn" in args.model:
-        if args.rpn_score_thresh is not None:
-            kwargs["rpn_score_thresh"] = args.rpn_score_thresh
+    if args.rpn_score_thresh is not None:
+        kwargs["rpn_score_thresh"] = args.rpn_score_thresh
 
-    # model = torchvision.models.get_model(args.model, weights=args.weights, weights_backbone=args.weights_backbone, num_classes=num_classes, **kwargs)
-    model = torchvision.models.detection.maskrcnn_resnet50_fpn()
+    # model = torchvision.models.detection.maskrcnn_resnet50_fpn_v2()
+
+    # frozen backbone
+    backbone = vit_maskrcnn_backbone(args.arch, args.patch_size, args.pretrained_weights, args.checkpoint_key)
+    for p in backbone.parameters():
+        p.requires_grad = False
+
+    # anchor generator 
+    anchor_generator = AnchorGenerator(sizes=((32, 64, 128, 256, 512),), aspect_ratios=((0.5, 1.0, 2.0),))
+
+    # rpn_head = RPNHead(backbone.out_channels, anchor_generator.num_anchors_per_location()[0])
+    # box_head = FastRCNNConvFCHead((backbone.out_channels, 7, 7), [256, 256, 256, 256], [1024], norm_layer=torch.nn.BatchNorm2d)
+    # mask_head = MaskRCNNHeads(backbone.out_channels, [256, 256, 256, 256], 1, norm_layer=torch.nn.BatchNorm2d)
+
+    rpn_head = RPNHead(backbone.out_channels, anchor_generator.num_anchors_per_location()[0])
+    box_head = FastRCNNConvFCHead((backbone.out_channels, 7, 7), [256], [1024], norm_layer=None)
+    mask_head = MaskRCNNHeads(backbone.out_channels, [256], 1, norm_layer=None)
+
+    box_roi_pooler = torchvision.ops.MultiScaleRoIAlign(featmap_names=['0'], output_size=7, sampling_ratio=2)
+    mask_roi_pooler = torchvision.ops.MultiScaleRoIAlign(featmap_names=['0'], output_size=14, sampling_ratio=2)
+
+    # # rpn head
+    # rpn_head = RPNHead(backbone.out_channels, anchor_generator.num_anchors_per_location()[0], conv_depth=0)
+
+    # # mask head
+    # mask_layers = (256,)
+    # mask_dilation = 1
+    # mask_head = MaskRCNNHeads(backbone.out_channels, mask_layers, mask_dilation)
+
+    # # box_head 
+    # resolution = box_roi_pooler.output_size[0]
+    # representation_size = 1024
+    # box_head = LinearHead(backbone.out_channels * resolution**2, representation_size)
+
+    model = MaskRCNN(backbone, 
+                     num_classes=91, 
+                     rpn_anchor_generator=anchor_generator,
+                     rpn_head=rpn_head,
+                     box_head=box_head,
+                     mask_head=mask_head,
+                     box_roi_pool=box_roi_pooler, 
+                     mask_roi_pool=mask_roi_pooler
+                     )
+
+    print(model)
+
     model.to(device)
     if args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
@@ -167,34 +265,21 @@ def main(args):
 
     if args.norm_weight_decay is None:
         parameters = [p for p in model.parameters() if p.requires_grad]
+        nums = sum([p.numel() for p in model.parameters() if p.requires_grad])
+        print('Trainable parameters:', nums)
     else:
         param_groups = torchvision.ops._utils.split_normalization_params(model)
         wd_groups = [args.norm_weight_decay, args.weight_decay]
         parameters = [{"params": p, "weight_decay": w} for p, w in zip(param_groups, wd_groups) if p]
 
-    opt_name = args.opt.lower()
-    if opt_name.startswith("sgd"):
-        optimizer = torch.optim.SGD(parameters, lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay, nesterov="nesterov" in opt_name)
-    elif opt_name == "adamw":
-        optimizer = torch.optim.AdamW(parameters, lr=args.lr, weight_decay=args.weight_decay)
-    else:
-        raise RuntimeError(f"Invalid optimizer {args.opt}. Only SGD and AdamW are supported.")
+    optimizer = torch.optim.__dict__[args.opt](parameters, args.lr, weight_decay=args.weight_decay)
 
     scaler = torch.cuda.amp.GradScaler() if args.amp else None
-
-    args.lr_scheduler = args.lr_scheduler.lower()
-    if args.lr_scheduler == "multisteplr":
-        lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=args.lr_steps, gamma=args.lr_gamma)
-    elif args.lr_scheduler == "cosineannealinglr":
-        lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
-    else:
-        raise RuntimeError(f"Invalid lr scheduler '{args.lr_scheduler}'. Only MultiStepLR and CosineAnnealingLR are supported.")
 
     if args.resume:
         checkpoint = torch.load(args.resume, map_location="cpu")
         model_without_ddp.load_state_dict(checkpoint["model"])
         optimizer.load_state_dict(checkpoint["optimizer"])
-        lr_scheduler.load_state_dict(checkpoint["lr_scheduler"])
         args.start_epoch = checkpoint["epoch"] + 1
         if args.amp:
             scaler.load_state_dict(checkpoint["scaler"])
@@ -208,19 +293,16 @@ def main(args):
     start_time = time.time()
     for epoch in range(args.start_epoch, args.epochs):
         train_one_epoch(model, optimizer, data_loader, device, epoch, args.print_freq, scaler)
-        lr_scheduler.step()
         if args.output_dir:
             checkpoint = {
                 "model": model_without_ddp.state_dict(),
                 "optimizer": optimizer.state_dict(),
-                "lr_scheduler": lr_scheduler.state_dict(),
                 "args": args,
                 "epoch": epoch,
             }
             if args.amp:
                 checkpoint["scaler"] = scaler.state_dict()
-            utils.save_on_master(checkpoint, os.path.join(args.output_dir, f"model_{epoch}.pth"))
-            utils.save_on_master(checkpoint, os.path.join(args.output_dir, "checkpoint.pth"))
+            utils.save_on_master(checkpoint, os.path.join(args.output_dir, args.save_prefix + "_checkpoint.pth"))
 
         # evaluate after every epoch
         evaluate(model, data_loader_test, device=device)
