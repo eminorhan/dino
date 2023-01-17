@@ -15,6 +15,8 @@ from coco_utils import get_coco
 from torch import nn
 from torchvision.transforms import functional as F, InterpolationMode
 from torchvision.models.segmentation import FCN
+from torchvision import models as torchvision_models
+from torchvision.models._utils import IntermediateLayerGetter
 
 sys.path.insert(0, os.path.abspath('..'))
 import vision_transformer as vits
@@ -37,20 +39,20 @@ def load_pretrained_weights(model, pretrained_weights, checkpoint_key):
         print("There is no reference weights available for this model => We use random weights.")
 
 
-class FCNHead(torch.nn.Sequential):
+class FCNHead(nn.Sequential):
     def __init__(self, in_channels, channels):
         layers = [nn.Conv2d(in_channels, channels, 1)]
 
         super().__init__(*layers)
 
 
-class vit_maskrcnn_backbone(torch.nn.Module):
-    def __init__(self, arch, patch_size, pretrained_weights, checkpoint_key):
+class vit_fcn_backbone(nn.Module):
+    def __init__(self, arch, patch_size, pretrained_weights, checkpoint_key, save_prefix):
         super().__init__()
 
         self.patch_size = patch_size
         self.backbone = vits.__dict__[arch](patch_size=patch_size, num_classes=0)
-        if pretrained_weights is not None:
+        if not save_prefix.startswith("random"):
             load_pretrained_weights(self.backbone, pretrained_weights, checkpoint_key)
         self.out_channels = self.backbone.embed_dim
 
@@ -65,13 +67,13 @@ class vit_maskrcnn_backbone(torch.nn.Module):
         return y
 
 
-class vit_maskrcnn_backbone_aux(torch.nn.Module):
-    def __init__(self, arch, patch_size, pretrained_weights, checkpoint_key):
+class vit_fcn_backbone_aux(nn.Module):
+    def __init__(self, arch, patch_size, pretrained_weights, checkpoint_key, save_prefix):
         super().__init__()
 
         self.patch_size = patch_size
         self.backbone = vits.__dict__[arch](patch_size=patch_size, num_classes=0)
-        if pretrained_weights is not None:
+        if not save_prefix.startswith("random"):
             load_pretrained_weights(self.backbone, pretrained_weights, checkpoint_key)
         self.out_channels = self.backbone.embed_dim
 
@@ -93,6 +95,23 @@ class vit_maskrcnn_backbone_aux(torch.nn.Module):
         a = a.reshape((a.shape[0], a.shape[1], w_fmap, h_fmap))  # batch x channel x width x height
         y["aux"] = a
         return y
+
+
+class resnext_fcn_backbone(nn.Module):
+    def __init__(self, arch, pretrained_weights, checkpoint_key, save_prefix, aux_loss):
+        super().__init__()
+
+        self.backbone = torchvision_models.__dict__[arch]()
+        self.out_channels = self.backbone.fc.weight.shape[1]
+        if not save_prefix.startswith("random"):
+            load_pretrained_weights(self.backbone, pretrained_weights, checkpoint_key)
+        if aux_loss:
+            self.backbone = IntermediateLayerGetter(self.backbone, return_layers={"layer4": "out", "layer3": "aux"})
+        else:
+            self.backbone = IntermediateLayerGetter(self.backbone, return_layers={"layer4": "out"})
+
+    def forward(self, x):
+        return self.backbone(x)
 
 
 def get_dataset(dir_path, name, image_set, transform):
@@ -240,17 +259,26 @@ def main(args):
     print('Number of test images:', len(dataset_test), 'Number of test iterations per epoch:', len(data_loader_test))
 
     # set up model
-    if args.aux_loss:
-        backbone = vit_maskrcnn_backbone_aux(args.arch, args.patch_size, args.pretrained_weights, args.checkpoint_key)
+    if args.arch in vits.__dict__.keys():
+        if args.aux_loss:
+            backbone = vit_fcn_backbone_aux(args.arch, args.patch_size, args.pretrained_weights, args.checkpoint_key, args.save_prefix)
+        else:
+            backbone = vit_fcn_backbone(args.arch, args.patch_size, args.pretrained_weights, args.checkpoint_key, args.save_prefix)
+    elif args.arch in torchvision_models.__dict__.keys():
+        backbone = resnext_fcn_backbone(args.arch, args.pretrained_weights, args.checkpoint_key, args.save_prefix, args.aux_loss)
     else:
-        backbone = vit_maskrcnn_backbone(args.arch, args.patch_size, args.pretrained_weights, args.checkpoint_key)
+        print(f"Unknown architecture: {args.arch}")
+        sys.exit(1)
 
+    # freeze backbone
     for p in backbone.parameters():
         p.requires_grad = False
 
     aux_classifier = FCNHead(backbone.out_channels, num_classes) if args.aux_loss else None
     classifier = FCNHead(backbone.out_channels, num_classes)
     model = FCN(backbone, classifier, aux_classifier)
+
+    print(model)
 
     model.to(device)
     model_without_ddp = model

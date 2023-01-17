@@ -3,10 +3,10 @@
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=123GB
-#SBATCH --time=06:00:00
+#SBATCH --time=08:00:00
 #SBATCH --job-name=train_coco
 #SBATCH --output=train_coco_%A_%a.out
-#SBATCH --array=1
+#SBATCH --array=0-24
 
 module purge
 module load cuda/11.6.2
@@ -37,8 +37,7 @@ python -u train.py \
 	--output_dir "/scratch/eo41/dino/segmentation/evals/coco" \
 	--epochs 10 \
 	--batch_size 32 \
-	--lr 0.0003 \
-	--workers 16 \
-	--aux_loss
+	--lr 0.0005 \
+	--workers 16
 
 echo "Done"
