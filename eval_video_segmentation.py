@@ -15,6 +15,7 @@
 Some parts are taken from https://github.com/Liusifei/UVC
 """
 import os
+import sys
 import copy
 import glob
 import queue
@@ -28,6 +29,7 @@ import torch
 from torch.nn import functional as F
 from PIL import Image
 
+import torchvision.models as torchvision_models
 import dino_utils as utils
 import vision_transformer as vits
 
@@ -45,8 +47,15 @@ def eval_video_tracking_davis(args, model, frame_list, video_dir, first_seg, seg
 
     # first frame
     frame1, ori_h, ori_w = read_frame(frame_list[0])
+
     # extract first frame feature
-    frame1_feat = extract_feature(model, frame1).T #  dim x h*w
+    if args.arch.startswith('vit'):
+        frame1_feat = extract_feature(model, frame1).T   # dim x h*w
+    elif args.arch.startswith('resnext'):
+        frame1_feat = extract_feature_resnext(model, frame1).T   # dim x h*w
+    else:
+        print(f"Unknow architecture: {args.arch}")
+        sys.exit(1)
 
     # saving first segmentation
     out_path = os.path.join(video_folder, "00000.png")
@@ -113,7 +122,13 @@ def label_propagation(args, model, frame_tar, list_frame_feats, list_segs, mask_
     propagate segs of frames in list_frames to frame_tar
     """
     ## we only need to extract feature of the target frame
-    feat_tar, h, w = extract_feature(model, frame_tar, return_h_w=True)
+    if args.arch.startswith('vit'):
+        feat_tar, h, w = extract_feature(model, frame_tar, return_h_w=True)
+    elif args.arch.startswith('resnext'):    
+        feat_tar, h, w = extract_feature_resnext(model, frame_tar, return_h_w=True)
+    else:
+        print(f"Unknow architecture: {args.arch}")
+        sys.exit(1)
 
     return_feat_tar = feat_tar.T # dim x h*w
 
@@ -143,6 +158,7 @@ def label_propagation(args, model, frame_tar, list_frame_feats, list_segs, mask_
     segs = torch.cat(list_segs)
     nmb_context, C, h, w = segs.shape
     segs = segs.reshape(nmb_context, C, -1).transpose(2, 1).reshape(-1, C).T # C x nmb_context*h*w
+    print(segs.shape, aff.shape)
     seg_tar = torch.mm(segs, aff)
     seg_tar = seg_tar.reshape(1, C, h, w)
     return seg_tar, return_feat_tar, mask_neighborhood
@@ -152,10 +168,29 @@ def extract_feature(model, frame, return_h_w=False):
     """Extract one frame feature everytime."""
     out = model.get_intermediate_layers(frame.unsqueeze(0).cuda(), n=1)[0]
     out = out[:, 1:, :]  # we discard the [CLS] token
+    print(out.shape)
     h, w = int(frame.shape[1] / model.patch_embed.patch_size), int(frame.shape[2] / model.patch_embed.patch_size)
     dim = out.shape[-1]
     out = out[0].reshape(h, w, dim)
     out = out.reshape(-1, dim)
+    print(out.shape, h, w)
+    if return_h_w:
+        return out, h, w
+    return out
+
+
+def extract_feature_resnext(model, frame, return_h_w=False):
+    """Extract one frame feature everytime."""
+    new_model = torchvision_models._utils.IntermediateLayerGetter(model, {'layer4': '0'})
+    out = new_model(frame.unsqueeze(0).cuda())['0']
+    print(out.shape)
+    out = torch.permute(out, (0, 2, 3, 1))
+    print(out.shape)
+    h, w = out.shape[1], out.shape[2]
+    dim = out.shape[-1]
+    out = out[0].reshape(h, w, dim)
+    out = out.reshape(-1, dim)
+    print(out.shape, h, w)
     if return_h_w:
         return out, h, w
     return out
@@ -249,13 +284,12 @@ def color_normalize(x, mean=[0.485, 0.456, 0.406], std=[0.228, 0.224, 0.225]):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Evaluation with video object segmentation on DAVIS 2017')
     parser.add_argument('--pretrained_weights', default='', type=str, help="Path to pretrained weights to evaluate.")
-    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_tiny', 'vit_small', 'vit_base', 'vit_large'], help='Architecture (support only ViT atm).')
+    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_tiny', 'vit_small', 'vit_base', 'vit_large', 'resnext50_32x4d'], help='Architecture (support only ViT atm).')
     parser.add_argument('--patch_size', default=16, type=int, help='Patch resolution of the model.')
     parser.add_argument("--checkpoint_key", default="teacher", type=str, help='Key to use in the checkpoint (example: "teacher")')
     parser.add_argument('--output_dir', default=".", help='Path where to save segmentations')
     parser.add_argument('--data_path', default='/path/to/davis/', type=str)
     parser.add_argument("--save_prefix", default="", type=str, help="""prefix for saving checkpoint and log files""")
-
     parser.add_argument("--n_last_frames", type=int, default=7, help="number of preceeding frames")
     parser.add_argument("--size_mask_neighborhood", default=12, type=int, help="We restrict the set of source nodes considered to a spatial neighborhood of query node")
     parser.add_argument("--topk", type=int, default=5, help="accumulate label from top k neighbors")
@@ -265,8 +299,18 @@ if __name__ == '__main__':
     print("git:\n  {}\n".format(utils.get_sha()))
     print("\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items())))
 
-    # building network
-    model = vits.__dict__[args.arch](patch_size=args.patch_size, num_classes=0)
+    # ============ building network ... ============
+    # if the network is a Vision Transformer (i.e. vit_tiny, vit_small, vit_base)
+    if args.arch in vits.__dict__.keys():
+        model = vits.__dict__[args.arch](patch_size=args.patch_size, num_classes=0)
+    # otherwise, we check if the architecture is in torchvision models
+    elif args.arch in torchvision_models.__dict__.keys():
+        model = torchvision_models.__dict__[args.arch]()
+        model.fc = torch.nn.Identity()
+    else:
+        print(f"Unknow architecture: {args.arch}")
+        sys.exit(1)
+
     print(f"Model {args.arch} {args.patch_size}x{args.patch_size} built.")
     model.cuda()
     
