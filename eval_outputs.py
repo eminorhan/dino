@@ -100,7 +100,7 @@ def fwd_prop(val_loader, model, class_names, args):
         places365_val_labels = torch.from_numpy(np.load('places365_val_labels.npz')['labels'])
         it = 0
 
-    for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 1, header):
+    for inp, target in metric_logger.log_every(val_loader, len(val_loader) // 10, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
         if task== 'places365':

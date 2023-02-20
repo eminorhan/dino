@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#SBATCH --gres=gpu:rtx8000:1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=200GB
-#SBATCH --time=0:50:00
+#SBATCH --gres=gpu:a100:1
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=240GB
+#SBATCH --time=0:10:00
 #SBATCH --job-name=dino_outs_core50
 #SBATCH --output=dino_outs_core50_%A_%a.out
 #SBATCH --array=0-24
@@ -33,8 +33,8 @@ python -u /scratch/eo41/dino/eval_outputs.py \
 	--pretrained_weights "/scratch/eo41/dino/models_${MODEL}/${SUBJECT}_5fps_${MODEL}_checkpoint.pth" \
 	--save_prefix ${SUBJECT}_${MODEL} \
 	--checkpoint_key "teacher" \
-	--batch_size 1024 \
-	--num_workers 8 \
+	--batch_size 512 \
+	--num_workers 16 \
 	--output_dir "/scratch/eo41/dino/outputs/core50" \
 	--val_data_path "/vast/eo41/data/core50/val"
 	
