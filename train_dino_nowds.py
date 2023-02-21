@@ -134,14 +134,14 @@ def train_dino(args):
         # teacher_without_ddp and teacher are the same thing
         teacher_without_ddp = teacher
 
-    student = nn.parallel.DataParallel(student, device_ids=[args.gpu])
+    student = nn.parallel.DataParallel(student)
     # teacher and student start with the same weights
     teacher_without_ddp.load_state_dict(student.module.state_dict())
     # there is no backpropagation through the teacher, so no need for gradients
     for p in teacher.parameters():
         p.requires_grad = False
 
-    print(f"Student and Teacher are built: they are both {args.arch} network.")
+    print(f"Student and Teacher are built: they are both {args.arch} networks.")
 
     # ============ preparing loss ... ============
     dino_loss = DINOLoss(
