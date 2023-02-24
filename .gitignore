@@ -6,6 +6,7 @@
 *.npz
 *.out
 *.jpg
+*.jpeg
 *.png
 *.mp4
 
@@ -13,3 +14,5 @@
 **/__pycache__/
 optimizing_images/
 outputs/
+labeled_s_examples/
+cams/

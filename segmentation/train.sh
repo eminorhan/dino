@@ -6,7 +6,7 @@
 #SBATCH --time=08:00:00
 #SBATCH --job-name=train_coco
 #SBATCH --output=train_coco_%A_%a.out
-#SBATCH --array=0-24
+#SBATCH --array=0
 
 module purge
 module load cuda/11.6.2

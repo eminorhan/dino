@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --gres=gpu:a100:4
-#SBATCH --cpus-per-task=16
+#SBATCH --cpus-per-task=64
 #SBATCH --mem=492GB
 #SBATCH --time=48:00:00
 #SBATCH --job-name=dino_train_nowds
@@ -17,7 +17,7 @@ srun python -u /scratch/eo41/dino/train_dino_nowds.py \
 	--use_fp16 false \
 	--arch "vit_base" \
 	--patch_size 14 \
-	--batch_size 256 \
+	--batch_size 464 \
 	--num_workers 16 \
 	--freeze_last_layer 0 \
 	--lr 0.0001 \
