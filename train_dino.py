@@ -93,7 +93,7 @@ def preprocess(sample):
 
 def train_dino(args):
     dino_utils.init_distributed_mode(args)
-    dino_utils.fix_random_seeds(args.seed)
+    # dino_utils.fix_random_seeds(args.seed)
     print("git:\n  {}\n".format(dino_utils.get_sha()))
     print("\n".join("%s: %s" % (k, str(v)) for k, v in sorted(dict(vars(args)).items())))
     cudnn.benchmark = True
