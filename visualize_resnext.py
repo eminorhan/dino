@@ -79,7 +79,8 @@ def predict(data_loader, model, weights, batch_size):
 
     m = torch.nn.Upsample(scale_factor=32, mode='bicubic')
     mm = m(x).cuda()
-    mm = 255 * torch.sigmoid(mm / torch.std(mm))
+    print(torch.mean(mm))
+    mm = 255 * torch.sigmoid((mm - torch.mean(mm)) / torch.std(mm))
     mm = mm.int()
     mm = mm.cpu().numpy()
 

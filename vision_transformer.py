@@ -137,8 +137,7 @@ class VisionTransformer(nn.Module):
         super().__init__()
         self.num_features = self.embed_dim = embed_dim
 
-        self.patch_embed = PatchEmbed(
-            img_size=img_size[0], patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim)
+        self.patch_embed = PatchEmbed(img_size=img_size[0], patch_size=patch_size, in_chans=in_chans, embed_dim=embed_dim)
         num_patches = self.patch_embed.num_patches
 
         self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
@@ -155,7 +154,6 @@ class VisionTransformer(nn.Module):
 
         # Classifier head
         self.head = nn.Linear(embed_dim, num_classes) if num_classes > 0 else nn.Identity()
-
         trunc_normal_(self.pos_embed, std=.02)
         trunc_normal_(self.cls_token, std=.02)
         self.apply(self._init_weights)
@@ -209,7 +207,8 @@ class VisionTransformer(nn.Module):
         for blk in self.blocks:
             x = blk(x)
         x = self.norm(x)
-        return x[:, 0]
+        x = self.head(x[:, 0])
+        return x
 
     def get_last_selfattention(self, x):
         x = self.prepare_tokens(x)
