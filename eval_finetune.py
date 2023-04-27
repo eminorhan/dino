@@ -107,15 +107,15 @@ def eval_linear(args):
             with (Path(args.output_dir) / (args.save_prefix + "_{}_log.txt".format(args.frac_retained))).open("a") as f:
                 f.write(json.dumps(log_stats) + "\n")
 
-            save_dict = {
-                "epoch": epoch + 1,
-                "state_dict": model.state_dict(),
-                "optimizer": optimizer.state_dict(),
-                "best_acc_1": best_acc_1,
-                "best_acc_5": best_acc_5,
-            }
+            # save_dict = {
+            #     "epoch": epoch + 1,
+            #     "state_dict": model.state_dict(),
+            #     "optimizer": optimizer.state_dict(),
+            #     "best_acc_1": best_acc_1,
+            #     "best_acc_5": best_acc_5,
+            # }
 
-            torch.save(save_dict, os.path.join(args.output_dir, args.save_prefix + "_{}_checkpoint.pth.tar".format(args.frac_retained)))
+            # torch.save(save_dict, os.path.join(args.output_dir, args.save_prefix + "_{}_checkpoint.pth.tar".format(args.frac_retained)))
 
     print("Finetuning of the model completed.\n Top-1 val accuracy: {acc1:.1f}".format(acc1=best_acc_1))
     print("Finetuning of the model completed.\n Top-5 val accuracy: {acc5:.1f}".format(acc5=best_acc_5))

@@ -14,31 +14,28 @@ export MASTER_ADDR=$(hostname -s)
 export MASTER_PORT=$(shuf -i 10000-65500 -n 1)
 export WORLD_SIZE=4
 
-module purge
-module load cuda/11.3.1
-
 ### ########################################## IMAGENET ########################################## ###
 
-#srun python -u /scratch/eo41/dino/train_dino.py \
-#	--use_fp16 false \
-#	--arch "vit_base" \
-#	--patch_size 14 \
-#	--batch_size_per_gpu 116 \
-#	--num_workers 8 \
-#	--freeze_last_layer 0 \
-#	--lr 0.0001 \
-#	--min_lr 0.0001 \
-#	--global_crops_scale 0.2 1 \
-#	--local_crops_scale 0.05 0.2 \
-#	--optimizer adamw \
-#	--weight_decay 0.0 \
-#	--weight_decay_end 0.0 \
-#	--clip_grad 1.0 \
-#	--saveckp_freq 10000 \
-#	--print_freq 10000 \
-#	--output_dir "/scratch/eo41/dino/models_vitb14" \
-#	--data_path "/scratch/eo41/data/imagenet/imagenet_train_{000000..000001}.tar" \
-#	--save_prefix "imagenet_100_vitb14"
+srun python -u /scratch/eo41/dino/train_dino.py \
+	--use_fp16 false \
+	--arch "vit_base" \
+	--patch_size 14 \
+	--batch_size_per_gpu 116 \
+	--num_workers 8 \
+	--freeze_last_layer 0 \
+	--lr 0.0001 \
+	--min_lr 0.0001 \
+	--global_crops_scale 0.2 1 \
+	--local_crops_scale 0.05 0.2 \
+	--optimizer adamw \
+	--weight_decay 0.0 \
+	--weight_decay_end 0.0 \
+	--clip_grad 1.0 \
+	--saveckp_freq 5000 \
+	--print_freq 5000 \
+	--output_dir "/scratch/eo41/dino/models_vitb14" \
+	--data_path "/scratch/eo41/data/imagenet/imagenet_train_{000000..000001}.tar" \
+	--save_prefix "imagenet_100_5fps_vitb14"
 
 #srun python -u /scratch/eo41/dino/train_dino.py \
 #	--use_fp16 false \
@@ -183,26 +180,26 @@ module load cuda/11.3.1
 
 ### ########################################## EGO4D ########################################## ###
 
-srun python -u /scratch/eo41/dino/train_dino.py \
-	--use_fp16 false \
-	--arch "vit_base" \
-	--patch_size 14 \
-	--batch_size_per_gpu 115 \
-	--num_workers 16 \
-	--freeze_last_layer 0 \
-	--lr 0.0001 \
-	--min_lr 0.0001 \
-	--global_crops_scale 0.2 1 \
-	--local_crops_scale 0.05 0.2 \
-	--optimizer adamw \
-	--weight_decay 0.0 \
-	--weight_decay_end 0.0 \
-	--clip_grad 1.0 \
-	--saveckp_freq 5000 \
-	--print_freq 5000 \
-	--output_dir "/scratch/eo41/dino/models_vitb14" \
-	--data_path "/vast/eo41/data/ego4d/ego4d-200h_1.0_1_{000000..000004}.tar" \
-	--save_prefix "ego4d_vitb14"
+# srun python -u /scratch/eo41/dino/train_dino.py \
+# 	--use_fp16 false \
+# 	--arch "vit_base" \
+# 	--patch_size 14 \
+# 	--batch_size_per_gpu 115 \
+# 	--num_workers 16 \
+# 	--freeze_last_layer 0 \
+# 	--lr 0.0001 \
+# 	--min_lr 0.0001 \
+# 	--global_crops_scale 0.2 1 \
+# 	--local_crops_scale 0.05 0.2 \
+# 	--optimizer adamw \
+# 	--weight_decay 0.0 \
+# 	--weight_decay_end 0.0 \
+# 	--clip_grad 1.0 \
+# 	--saveckp_freq 5000 \
+# 	--print_freq 5000 \
+# 	--output_dir "/scratch/eo41/dino/models_vitb14" \
+# 	--data_path "/vast/eo41/data/ego4d/ego4d-200h_1.0_1_{000000..000004}.tar" \
+# 	--save_prefix "ego4d_vitb14"
 
 ### ########################################## KINETICS ########################################## ###
 

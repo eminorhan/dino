@@ -284,7 +284,7 @@ if __name__ == '__main__':
     parser.add_argument('--arch', default='vit_large', type=str, help='Architecture')
     parser.add_argument('--patch_size', default=16, type=int, help='Patch resolution of the model.')
     parser.add_argument('--pretrained_weights', default='', type=str, help="Path to pretrained weights to evaluate.")
-    parser.add_argument("--checkpoint_key", default="student", type=str, help='Key to use in the checkpoint (example: "teacher")')
+    parser.add_argument("--checkpoint_key", default="teacher", type=str, help='Key to use in the checkpoint (example: "teacher")')
     parser.add_argument('--epochs', default=100, type=int, help='Number of epochs of training.')
     parser.add_argument("--lr", default=0.0005, type=float, help="""Learning rate at the beginning of training (highest LR used during training).""")
     parser.add_argument('--batch_size', default=1024, type=int, help='total batch-size')

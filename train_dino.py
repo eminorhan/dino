@@ -71,9 +71,9 @@ def get_args_parser():
     parser.add_argument('--optimizer', default='adamw', type=str, choices=['adamw', 'sgd', 'lars'], help="""Type of optimizer. We recommend using adamw with ViTs.""")
 
     # Multi-crop parameters
-    parser.add_argument('--global_crops_scale', type=float, nargs='+', default=(0.4, 1.), help="""Scale range of the cropped image before resizing, relatively to the origin image. Used for large global view cropping. When disabling multi-crop (--local_crops_number 0), we recommand using a wider range of scale ("--global_crops_scale 0.14 1." for example)""")
+    parser.add_argument('--global_crops_scale', type=float, nargs='+', default=(0.2, 1.), help="""Scale range of the cropped image before resizing, relatively to the origin image. Used for large global view cropping. When disabling multi-crop (--local_crops_number 0), we recommand using a wider range of scale ("--global_crops_scale 0.14 1." for example)""")
     parser.add_argument('--local_crops_number', type=int, default=8, help="""Number of small local views to generate. Set this parameter to 0 to disable multi-crop training.""")
-    parser.add_argument('--local_crops_scale', type=float, nargs='+', default=(0.05, 0.4), help="""Scale range of the cropped image before resizing, relatively to the origin image.""")
+    parser.add_argument('--local_crops_scale', type=float, nargs='+', default=(0.05, 0.2), help="""Scale range of the cropped image before resizing, relatively to the origin image.""")
 
     # Misc
     parser.add_argument("--data_path", default="/scratch/eo41/data/saycam/SAY_5fps_300s_{000000..000009}.tar", type=str, help="""path to dataset""")
