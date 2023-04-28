@@ -8,9 +8,6 @@
 #SBATCH --output=visualize_resnext_%A_%a.out
 #SBATCH --array=0-4
 
-module purge
-module load cuda/11.6.2
-
 srun python -u /scratch/eo41/dino/visualize_resnext.py \
 	--data_path '/scratch/eo41/dino/labeled_s_examples/car' \
 	--class_idx 2 \
