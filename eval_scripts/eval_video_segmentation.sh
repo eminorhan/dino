@@ -8,10 +8,7 @@
 #SBATCH --time=00:45:00
 #SBATCH --job-name=eval_video_seg
 #SBATCH --output=eval_video_seg_%A_%a.out
-#SBATCH --array=0-1
-
-module purge
-module load cuda/11.3.1
+#SBATCH --array=3
 
 MODELS=(vitb14 vitb14 vitb14 vitb14 vitb14 vitb14 vitb14 resnext50 resnext50 resnext50 resnext50 vitb14 vitb14 vitb14 vitb14 vitl16 vitl16 vitl16 vitl16 vitb16 vitb16 vitb16 vitb16 vits16 vits16 vits16 vits16)
 SUBJECTS=(ego4d kinetics random imagenet_100 imagenet_10 imagenet_3 imagenet_1 say s a y say s a y say s a y say s a y say s a y)

@@ -9,10 +9,10 @@
 #SBATCH --array=0-4
 
 srun python -u /scratch/eo41/dino/visualize_resnext.py \
-	--data_path '/scratch/eo41/dino/labeled_s_examples/car' \
-	--class_idx 2 \
+	--data_path '/scratch/eo41/dino/labeled_s_examples/table' \
+	--class_idx 23 \
 	--n_out 26 \
-	--batch_size 4 \
+	--batch_size 8 \
 	--seed $SLURM_ARRAY_TASK_ID \
 	--pretrained_backbone '/scratch/eo41/dino/models_resnext50/s_5fps_resnext50_checkpoint.pth' \
 	--pretrained_fc '/scratch/eo41/dino/evals/labeled_s/s_resnext50_checkpoint.pth.tar'
