@@ -13,4 +13,5 @@
 **/__pycache__/
 outputs/
 labeled_s_examples/
+ecoset_examples/
 video_atts/

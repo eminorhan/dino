@@ -86,4 +86,4 @@ python -u visualize_resnext.py \
 	--pretrained_backbone BACKBONE_PATH \
 	--pretrained_fc FC_PATH
 ```
-Here, `data_path` is the path to the images for which we compute the attention maps, `class_idx` is the index of the class with respect to which we compute the attention maps, `n_out` is the total number of classes in the pretrained model's output layer, `pretrained_backbone` is the path to the pretrained backbone (trained with SSL), and `pretrained_fc` is the path to the pretrained final `fc` layer of the model (trained separately as a linear probe).
+Here, `data_path` is the path to the images for which we compute the attention maps, `class_idx` is the index of the class with respect to which we compute the attention maps, `n_out` is the total number of classes in the pretrained model's output layer, `pretrained_backbone` is the path to the pretrained backbone (trained with SSL), and `pretrained_fc` is the path to the pretrained final `fc` layer of the model (trained separately as a linear probe). This will generate class activation maps as in the [`cams`](https://github.com/eminorhan/dino/tree/master/cams) folder.
