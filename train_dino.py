@@ -32,6 +32,7 @@ from torchvision import transforms
 from torchvision import models as torchvision_models
 
 import dino_utils
+import vision_mlps as vimlps
 import vision_transformer as vits
 from vision_transformer import DINOHead
 
@@ -45,7 +46,7 @@ def get_args_parser():
     parser = argparse.ArgumentParser('DINO', add_help=False)
 
     # Model parameters
-    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_small', 'vit_base', 'vit_large', 'deit_tiny', 'deit_small'] + torchvision_archs, help="""Name of architecture to train. For quick experiments with ViTs, we recommend using vit_small.""")
+    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_small', 'vit_base', 'vit_large', 'deit_tiny', 'deit_small', 'vimlp_small', 'vimlp_base', 'vimlp_large'] + torchvision_archs, help="""Name of architecture to train.""")
     parser.add_argument('--patch_size', default=16, type=int, help="""Size in pixels of input square patches - default 16 (for 16x16 patches). If <16, we recommend disabling mixed precision training (--use_fp16 false) to avoid instabilities.""")
     parser.add_argument('--out_dim', default=65536, type=int, help="""Dimensionality of the DINO head output. For complex and large datasets large values (like 65k) work well.""")
     parser.add_argument('--norm_last_layer', default=True, type=dino_utils.bool_flag, help="""Whether or not to weight normalize the last layer of the DINO head. Not normalizing leads to better performance but can make the training unstable. In our experiments, we typically set this paramater to False with vit_small and True with vit_base.""")
@@ -120,6 +121,10 @@ def train_dino(args):
         teacher = torchvision_models.__dict__[args.arch]()
         embed_dim = student.fc.weight.shape[1]
         print('Embedding dimension of student & teacher nets', embed_dim)
+    if args.arch in vimlps.__dict__.keys():
+        student = vimlps.__dict__[args.arch]()
+        teacher = vimlps.__dict__[args.arch]()
+        embed_dim = student.embed_dim
     else:
         print(f"Unknow architecture: {args.arch}")
 
@@ -148,7 +153,8 @@ def train_dino(args):
     for p in teacher.parameters():
         p.requires_grad = False
 
-    print(f"Student and Teacher are built: they are both {args.arch} network.")
+    print(f"Student and teacher are built: They are both {args.arch} models.")
+    print(f"Number of trainable params (M): {(sum(p.numel() for p in student.parameters() if p.requires_grad) / 1.e6)}" )
 
     # ============ preparing loss ... ============
     dino_loss = DINOLoss(
@@ -353,7 +359,10 @@ class DataAugmentationDINO(object):
     def __init__(self, global_crops_scale, local_crops_scale, local_crops_number):
         flip_and_color_jitter = transforms.Compose([
             transforms.RandomHorizontalFlip(p=0.5),
-            transforms.RandomApply([transforms.ColorJitter(brightness=0.9, contrast=0.9, saturation=0.9, hue=0.5)], p=0.9),
+            transforms.RandomApply(
+                [transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1)],
+                p=0.8
+            ),
             transforms.RandomGrayscale(p=0.2),
         ])
         normalize = transforms.Compose([
@@ -379,7 +388,7 @@ class DataAugmentationDINO(object):
         # transformation for the local small crops
         self.local_crops_number = local_crops_number
         self.local_transfo = transforms.Compose([
-            transforms.RandomResizedCrop(96, scale=local_crops_scale, interpolation=Image.BICUBIC),
+            transforms.RandomResizedCrop(224, scale=local_crops_scale, interpolation=Image.BICUBIC),  # note the local crop size 96 in original DINO 
             flip_and_color_jitter,
             dino_utils.GaussianBlur(p=0.5),
             normalize,
@@ -392,6 +401,51 @@ class DataAugmentationDINO(object):
         for _ in range(self.local_crops_number):
             crops.append(self.local_transfo(image))
         return crops
+
+
+# class DataAugmentationDINO(object):
+#     def __init__(self, global_crops_scale, local_crops_scale, local_crops_number):
+#         flip_and_color_jitter = transforms.Compose([
+#             transforms.RandomHorizontalFlip(p=0.5),
+#             transforms.RandomApply([transforms.ColorJitter(brightness=0.9, contrast=0.9, saturation=0.9, hue=0.5)], p=0.9),
+#             transforms.RandomGrayscale(p=0.2),
+#         ])
+#         normalize = transforms.Compose([
+#             transforms.ToTensor(),
+#             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+#         ])
+
+#         # first global crop
+#         self.global_transfo1 = transforms.Compose([
+#             transforms.RandomResizedCrop(224, scale=global_crops_scale, interpolation=Image.BICUBIC),
+#             flip_and_color_jitter,
+#             dino_utils.GaussianBlur(1.0),
+#             normalize,
+#         ])
+#         # second global crop
+#         self.global_transfo2 = transforms.Compose([
+#             transforms.RandomResizedCrop(224, scale=global_crops_scale, interpolation=Image.BICUBIC),
+#             flip_and_color_jitter,
+#             dino_utils.GaussianBlur(0.1),
+#             dino_utils.Solarization(0.2),
+#             normalize,
+#         ])
+#         # transformation for the local small crops
+#         self.local_crops_number = local_crops_number
+#         self.local_transfo = transforms.Compose([
+#             transforms.RandomResizedCrop(96, scale=local_crops_scale, interpolation=Image.BICUBIC),
+#             flip_and_color_jitter,
+#             dino_utils.GaussianBlur(p=0.5),
+#             normalize,
+#         ])
+
+#     def __call__(self, image):
+#         crops = []
+#         crops.append(self.global_transfo1(image))
+#         crops.append(self.global_transfo2(image))
+#         for _ in range(self.local_crops_number):
+#             crops.append(self.local_transfo(image))
+#         return crops
 
 
 if __name__ == '__main__':
