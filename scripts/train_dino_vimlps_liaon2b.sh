@@ -28,10 +28,10 @@ SAVE=${SAVES[$SLURM_ARRAY_TASK_ID]}
 echo $DATA
 echo $SAVE
 
-# vimlp_small
+# vimlp_large
 srun python -u /scratch/eo41/dino/train_dino.py \
-	--use_fp16 false \
-	--arch "vimlp_small" \
+	--use_fp16 true \
+	--arch "vimlp_large" \
 	--batch_size_per_gpu 256 \
 	--num_workers 8 \
 	--freeze_last_layer 0 \
@@ -39,6 +39,8 @@ srun python -u /scratch/eo41/dino/train_dino.py \
 	--min_lr 0.0001 \
 	--global_crops_scale 0.4 1 \
 	--local_crops_scale 0.05 0.4 \
+	--local_crops_number 0 \
+	--original_augs true \
 	--optimizer adamw \
 	--weight_decay 0.0 \
 	--weight_decay_end 0.0 \
@@ -47,6 +49,6 @@ srun python -u /scratch/eo41/dino/train_dino.py \
 	--print_freq 1000 \
 	--output_dir "/scratch/eo41/dino/models_vimlps_liaon2b" \
 	--data_path "/scratch/work/public/ml-datasets/laion2B-en-data/${DATA}.tar" \
-	--save_prefix "${SAVE}_small"
+	--save_prefix "${SAVE}_large"
 
 echo "Done"
