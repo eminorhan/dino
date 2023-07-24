@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader
 
 import dino_utils as utils
 import vision_transformer as vits
+import vision_mlps as vimlps
 
 def eval_linear(args):
     print("git:\n  {}\n".format(utils.get_sha()))
@@ -35,6 +36,9 @@ def eval_linear(args):
         model = torchvision_models.__dict__[args.arch]()
         embed_dim = model.fc.weight.shape[1]
         model.fc = nn.Identity()
+    elif args.arch in vimlps.__dict__.keys():
+        model = vimlps.__dict__[args.arch]()
+        embed_dim = model.embed_dim
     else:
         print(f"Unknow architecture: {args.arch}")
         sys.exit(1)

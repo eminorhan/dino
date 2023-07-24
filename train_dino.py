@@ -124,7 +124,7 @@ def train_dino(args):
         teacher = torchvision_models.__dict__[args.arch]()
         embed_dim = student.fc.weight.shape[1]
         print('Embedding dimension of student & teacher nets', embed_dim)
-    if args.arch in vimlps.__dict__.keys():
+    elif args.arch in vimlps.__dict__.keys():
         student = vimlps.__dict__[args.arch]()
         teacher = vimlps.__dict__[args.arch]()
         embed_dim = student.embed_dim
