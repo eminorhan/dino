@@ -27,9 +27,11 @@ import torch.nn as nn
 import torch.distributed as dist
 import torch.backends.cudnn as cudnn
 import torch.nn.functional as F
-import webdataset as wds
+from torch.distributed.fsdp import FullyShardedDataParallel
 from torchvision import transforms
 from torchvision import models as torchvision_models
+
+import webdataset as wds
 import dino_utils
 import vision_mlps as vimlps
 import vision_transformer as vits
@@ -45,7 +47,7 @@ def get_args_parser():
     parser = argparse.ArgumentParser('DINO', add_help=False)
 
     # Model parameters
-    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_small', 'vit_base', 'vit_large', 'deit_tiny', 'deit_small', 'vimlp_base', 'vimlp_large', 'vimlp_huge'] + torchvision_archs, help="""Name of architecture to train.""")
+    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_base', 'vit_large', 'deit_tiny', 'vimlp_base', 'vimlp_large', 'vimlp_huge'] + torchvision_archs, help="""Name of architecture to train.""")
     parser.add_argument('--patch_size', default=16, type=int, help="""Size in pixels of input square patches - default 16 (for 16x16 patches). If <16, we recommend disabling mixed precision training (--use_fp16 false) to avoid instabilities.""")
     parser.add_argument('--out_dim', default=65536, type=int, help="""Dimensionality of the DINO head output. For complex and large datasets large values (like 65k) work well.""")
     parser.add_argument('--norm_last_layer', default=True, type=dino_utils.bool_flag, help="""Whether or not to weight normalize the last layer of the DINO head. Not normalizing leads to better performance but can make the training unstable. In our experiments, we typically set this paramater to False with vit_small and True with vit_base.""")
@@ -149,13 +151,15 @@ def train_dino(args):
         # teacher_without_ddp and teacher are the same thing
         teacher_without_ddp = teacher
 
-    student = nn.parallel.DistributedDataParallel(student, device_ids=[args.gpu])
+    student = FullyShardedDataParallel(student)
     # teacher and student start with the same weights
     teacher_without_ddp.load_state_dict(student.module.state_dict())
     # there is no backpropagation through the teacher, so no need for gradients
     for p in teacher.parameters():
         p.requires_grad = False
 
+    print('Student:', student)
+    print('Teacher:', teacher)
     print(f"Student and teacher are built: They are both {args.arch} models.")
     print(f"Number of trainable params (M): {(sum(p.numel() for p in student.parameters() if p.requires_grad) / 1.e6)}" )
 
