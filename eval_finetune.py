@@ -33,7 +33,6 @@ def eval_linear(args):
     elif args.arch in vimlps.__dict__.keys():
         model = vimlps.__dict__[args.arch]()
         embed_dim = model.embed_dim
-        model = nn.Sequential(model, nn.Linear(embed_dim, args.num_labels))
     else:
         print(f"Unknow architecture: {args.arch}")
         sys.exit(1)
@@ -45,6 +44,9 @@ def eval_linear(args):
     else:
         print(f"Model {args.arch} built. Using random (untrained) weights.")
 
+    if args.arch in vimlps.__dict__.keys():
+        model = nn.Sequential(model, nn.Linear(embed_dim, args.num_labels))
+        
     model.cuda()
     model = nn.parallel.DataParallel(model)
     print('Model:', model)

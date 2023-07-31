@@ -156,7 +156,7 @@ def train_dino(args):
     for p in teacher.parameters():
         p.requires_grad = False
 
-    # print('Student:', student)
+    print('Student:', student)
     print(f"Student and teacher are built: They are both {args.arch} models.")
     print(f"Number of trainable params (M): {(sum(p.numel() for p in student.parameters() if p.requires_grad) / 1.e6)}" )
 

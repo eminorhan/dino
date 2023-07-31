@@ -53,6 +53,8 @@ def eval_linear(args):
     else:
         print(f"Model {args.arch} built. Using random (untrained) weights.")
 
+    print('Model:', model)
+
     linear_classifier = LinearClassifier(embed_dim, num_labels=args.num_labels)
     linear_classifier = linear_classifier.cuda()
     linear_classifier = nn.parallel.DataParallel(linear_classifier)
