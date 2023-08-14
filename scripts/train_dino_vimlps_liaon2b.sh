@@ -51,27 +51,4 @@ srun python -u /scratch/eo41/dino/train_dino.py \
 	--data_path "/scratch/work/public/ml-datasets/laion2B-en-data/${DATA}.tar" \
 	--save_prefix "${SAVE}_huge"
 
-# # vimlp_large
-# srun python -u /scratch/eo41/dino/train_dino.py \
-# 	--use_fp16 true \
-# 	--arch "vimlp_large" \
-# 	--batch_size_per_gpu 512 \
-# 	--num_workers 16 \
-# 	--freeze_last_layer 0 \
-# 	--lr 0.0001 \
-# 	--min_lr 0.0001 \
-# 	--global_crops_scale 0.4 1 \
-# 	--local_crops_scale 0.05 0.4 \
-# 	--local_crops_number 0 \
-# 	--original_augs true \
-# 	--optimizer adamw \
-# 	--weight_decay 0.0 \
-# 	--weight_decay_end 0.0 \
-# 	--clip_grad 1.0 \
-# 	--saveckp_freq 10000 \
-# 	--print_freq 10000 \
-# 	--output_dir "/scratch/eo41/dino/models_vimlps_liaon2b" \
-# 	--data_path "/scratch/work/public/ml-datasets/laion2B-en-data/${DATA}.tar" \
-# 	--save_prefix "${SAVE}_large"
-
 echo "Done"

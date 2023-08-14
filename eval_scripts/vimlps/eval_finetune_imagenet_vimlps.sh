@@ -10,15 +10,15 @@
 
 # vimlp_large
 python -u /scratch/eo41/dino/eval_finetune.py \
-	--arch "vimlp_large" \
-	--pretrained_weights "/scratch/eo41/dino/models_vimlps_liaon2b/dino_vimlp_liaon2b_large_checkpoint.pth" \
-	--save_prefix "dino_vimlp_large" \
+	--arch "vimlp_huge" \
+	--pretrained_weights "/scratch/eo41/dino/models_vimlps_liaon2b/dino_vimlp_liaon2b_huge_checkpoint.pth" \
+	--save_prefix "dino_vimlp_huge_finetuned" \
 	--checkpoint_key "teacher" \
 	--batch_size 2048 \
 	--epochs 100 \
 	--num_workers 16 \
-	--lr 0.0001 \
-	--output_dir "/scratch/eo41/dino/models_vimlps_liaon2b_finetuned" \
+	--lr 0.0005 \
+	--output_dir "/scratch/eo41/dino/eval_scripts/vimlps" \
 	--train_data_path "/scratch/work/public/imagenet/train" \
 	--val_data_path "/scratch/eo41/imagenet/val" \
 	--frac_retained 1.0 \

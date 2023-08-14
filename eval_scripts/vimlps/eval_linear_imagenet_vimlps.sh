@@ -10,15 +10,15 @@
 
 # vimlp_large
 python -u /scratch/eo41/dino/eval_linear.py \
-	--arch "vimlp_large" \
-	--pretrained_weights "/scratch/eo41/dino/models_vimlps_liaon2b/dino_vimlp_liaon2b_large_checkpoint.pth" \
-	--save_prefix "dino_vimlp_large" \
+	--arch "vimlp_huge" \
+	--pretrained_weights "/scratch/eo41/dino/models_vimlps_liaon2b/dino_vimlp_liaon2b_huge_checkpoint.pth" \
+	--save_prefix "dino_vimlp_huge_linear" \
 	--checkpoint_key "teacher" \
 	--batch_size 2048 \
 	--epochs 100 \
 	--num_workers 16 \
 	--lr 0.0005 \
-	--output_dir "/scratch/eo41/dino/evals/imagenet" \
+	--output_dir "/scratch/eo41/dino/eval_scripts/vimlps" \
 	--train_data_path "/scratch/work/public/imagenet/train" \
 	--val_data_path "/scratch/eo41/imagenet/val" \
 	--num_labels 1000
