@@ -286,7 +286,7 @@ def train_one_epoch(student, teacher, teacher_without_ddp, dino_loss, data_loade
                 save_dict['fp16_scaler'] = fp16_scaler.state_dict()
 
             dino_utils.save_on_master(save_dict, os.path.join(args.output_dir, args.save_prefix + '_checkpoint.pth'))
-            dino_utils.save_on_master(save_dict, os.path.join(args.output_dir, args.save_prefix + f'checkpoint{GLOBAL_ITER:04}.pth'))
+            dino_utils.save_on_master(save_dict, os.path.join(args.output_dir, args.save_prefix + f'_checkpoint_{GLOBAL_ITER:04}.pth'))
             
             # gather the stats from all processes
             metric_logger.synchronize_between_processes()
