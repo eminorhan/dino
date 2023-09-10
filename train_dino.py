@@ -314,7 +314,7 @@ class DINOLoss(nn.Module):
         self.ncrops = ncrops
         self.register_buffer("center", torch.zeros(1, out_dim))
         # we apply a warm up for the teacher temperature because
-        # a too high temperature makes the training instable at the beginning
+        # a too high temperature makes the training unstable at the beginning
         self.teacher_temp_schedule = np.concatenate((
             np.linspace(warmup_teacher_temp, teacher_temp, warmup_teacher_temp_epochs),
             np.ones(nepochs - warmup_teacher_temp_epochs) * teacher_temp
@@ -363,10 +363,7 @@ class DataAugmentationOriginalDINO(object):
     def __init__(self, global_crops_scale, local_crops_scale, local_crops_number):
         flip_and_color_jitter = transforms.Compose([
             transforms.RandomHorizontalFlip(p=0.5),
-            transforms.RandomApply(
-                [transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1)],
-                p=0.8
-            ),
+            transforms.RandomApply([transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1)], p=0.8),
             transforms.RandomGrayscale(p=0.2),
         ])
         normalize = transforms.Compose([
