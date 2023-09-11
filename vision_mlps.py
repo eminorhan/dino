@@ -38,3 +38,8 @@ class VisionMLP(nn.Module):
 def vimlp_huge(**kwargs):
     model = VisionMLP(input_size=224*224*3, depth=16, hidden_features=9008, **kwargs)
     return model
+
+
+def vimlp_giant(**kwargs):
+    model = VisionMLP(input_size=224*224*3, depth=16, hidden_features=9040, **kwargs)
+    return model

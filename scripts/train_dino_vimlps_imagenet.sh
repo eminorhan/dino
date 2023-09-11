@@ -1,18 +1,18 @@
 #!/bin/bash
 
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=4
-#SBATCH --gres=gpu:a100:4
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=480GB
-#SBATCH --time=48:00:00
+#SBATCH --mem=240GB
+#SBATCH --time=00:30:00
 #SBATCH --job-name=train_dino_vimlps_imagenet
 #SBATCH --output=train_dino_vimlps_imagenet_%A_%a.out
 #SBATCH --array=0
 
 export MASTER_ADDR=$(hostname -s)
 export MASTER_PORT=$(shuf -i 10000-65500 -n 1)
-export WORLD_SIZE=4
+export WORLD_SIZE=1
 
 SAVES=(
 	"dino_vimlp_imagenet" 
@@ -25,7 +25,7 @@ echo $SAVE
 # vimlp_huge
 srun python -u /scratch/eo41/dino/train_dino.py \
 	--use_fp16 true \
-	--arch "vimlp_huge" \
+	--arch "vimlp_giant" \
 	--batch_size_per_gpu 512 \
 	--num_workers 16 \
 	--freeze_last_layer 0 \
@@ -43,6 +43,6 @@ srun python -u /scratch/eo41/dino/train_dino.py \
 	--print_freq 10000 \
 	--output_dir "/scratch/eo41/dino/models_vimlps_imagenet" \
 	--data_path "/scratch/eo41/data/imagenet/imagenet_train_{000000..000001}.tar" \
-	--save_prefix "${SAVE}_huge"
+	--save_prefix "${SAVE}_giant"
 
 echo "Done"
