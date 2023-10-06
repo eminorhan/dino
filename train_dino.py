@@ -47,6 +47,8 @@ def get_args_parser():
     # Model parameters
     parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_small', 'vit_base', 'vit_large', 'vimlp_huge', 'vimlp_giant'] + torchvision_archs, help="""Name of architecture to train.""")
     parser.add_argument('--patch_size', default=16, type=int, help="""Size in pixels of input square patches - default 16 (for 16x16 patches). If <16, we recommend disabling mixed precision training (--use_fp16 false) to avoid instabilities.""")
+    parser.add_argument('--input_size', default=224, type=int, help="""Size of images in pixels""")
+
     parser.add_argument('--out_dim', default=65536, type=int, help="""Dimensionality of the DINO head output. For complex and large datasets large values (like 65k) work well.""")
     parser.add_argument('--norm_last_layer', default=True, type=dino_utils.bool_flag, help="""Whether or not to weight normalize the last layer of the DINO head. Not normalizing leads to better performance but can make the training unstable. In our experiments, we typically set this paramater to False with vit_small and True with vit_base.""")
     parser.add_argument('--momentum_teacher', default=0.9995, type=float, help="""Base EMA parameter for teacher update. The value is increased to 1 during training with cosine schedule. We recommend setting a higher value with small batches: for example use 0.9995 with batch size of 256.""")
@@ -74,7 +76,7 @@ def get_args_parser():
     parser.add_argument('--global_crops_scale', type=float, nargs='+', default=(0.2, 1.), help="""Scale range of the cropped image before resizing, relatively to the origin image. Used for large global view cropping. When disabling multi-crop (--local_crops_number 0), we recommand using a wider range of scale ("--global_crops_scale 0.14 1." for example)""")
     parser.add_argument('--local_crops_number', type=int, default=8, help="""Number of small local views to generate. Set this parameter to 0 to disable multi-crop training.""")
     parser.add_argument('--local_crops_scale', type=float, nargs='+', default=(0.05, 0.2), help="""Scale range of the cropped image before resizing, relatively to the origin image.""")
-    parser.add_argument('--original_augs', type=dino_utils.bool_flag, default=False, help="""Whether or not to use the original data augmentations in DINO.""")
+    parser.add_argument('--original_augs', type=bool, default=False, help="""Whether or not to use the original data augmentations in DINO.""")
 
     # Misc
     parser.add_argument("--data_path", default="/scratch/eo41/data/saycam/SAY_5fps_300s_{000000..000009}.tar", type=str, help="""path to dataset""")
@@ -101,9 +103,9 @@ def train_dino(args):
 
     # ============ preparing data ... ============
     if args.original_augs:
-        transform = DataAugmentationOriginalDINO(args.global_crops_scale, args.local_crops_scale, args.local_crops_number)
+        transform = DataAugmentationOriginalDINO(args.global_crops_scale, args.local_crops_scale, args.local_crops_number, input_size=args.input_size)
     else:
-        transform = DataAugmentationDINO(args.global_crops_scale, args.local_crops_scale, args.local_crops_number)  # stronger saycam augmentations
+        transform = DataAugmentationDINO(args.global_crops_scale, args.local_crops_scale, args.local_crops_number, input_size=args.input_size)  # stronger saycam augmentations
 
     dataset = (wds.WebDataset(args.data_path, resampled=True).shuffle(10000, initial=10000).decode("pil").to_tuple("jpg").map(preprocess).map(transform))
     data_loader = wds.WebLoader(dataset, shuffle=False, batch_size=args.batch_size_per_gpu, num_workers=args.num_workers)
@@ -360,7 +362,7 @@ class DINOLoss(nn.Module):
 
 
 class DataAugmentationOriginalDINO(object):
-    def __init__(self, global_crops_scale, local_crops_scale, local_crops_number):
+    def __init__(self, global_crops_scale, local_crops_scale, local_crops_number, input_size=224):
         flip_and_color_jitter = transforms.Compose([
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomApply([transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1)], p=0.8),
@@ -373,14 +375,14 @@ class DataAugmentationOriginalDINO(object):
 
         # first global crop
         self.global_transfo1 = transforms.Compose([
-            transforms.RandomResizedCrop(224, scale=global_crops_scale, interpolation=Image.BICUBIC),
+            transforms.RandomResizedCrop(input_size, scale=global_crops_scale, interpolation=Image.BICUBIC),
             flip_and_color_jitter,
             dino_utils.GaussianBlur(1.0),
             normalize,
         ])
         # second global crop
         self.global_transfo2 = transforms.Compose([
-            transforms.RandomResizedCrop(224, scale=global_crops_scale, interpolation=Image.BICUBIC),
+            transforms.RandomResizedCrop(input_size, scale=global_crops_scale, interpolation=Image.BICUBIC),
             flip_and_color_jitter,
             dino_utils.GaussianBlur(0.1),
             dino_utils.Solarization(0.2),
@@ -405,7 +407,7 @@ class DataAugmentationOriginalDINO(object):
 
 
 class DataAugmentationDINO(object):
-    def __init__(self, global_crops_scale, local_crops_scale, local_crops_number):
+    def __init__(self, global_crops_scale, local_crops_scale, local_crops_number, input_size=224):
         flip_and_color_jitter = transforms.Compose([
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomApply([transforms.ColorJitter(brightness=0.9, contrast=0.9, saturation=0.9, hue=0.5)], p=0.9),
@@ -418,14 +420,14 @@ class DataAugmentationDINO(object):
 
         # first global crop
         self.global_transfo1 = transforms.Compose([
-            transforms.RandomResizedCrop(224, scale=global_crops_scale, interpolation=Image.BICUBIC),
+            transforms.RandomResizedCrop(input_size, scale=global_crops_scale, interpolation=Image.BICUBIC),
             flip_and_color_jitter,
             dino_utils.GaussianBlur(1.0),
             normalize,
         ])
         # second global crop
         self.global_transfo2 = transforms.Compose([
-            transforms.RandomResizedCrop(224, scale=global_crops_scale, interpolation=Image.BICUBIC),
+            transforms.RandomResizedCrop(input_size, scale=global_crops_scale, interpolation=Image.BICUBIC),
             flip_and_color_jitter,
             dino_utils.GaussianBlur(0.1),
             dino_utils.Solarization(0.2),

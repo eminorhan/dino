@@ -64,6 +64,8 @@ def eval_linear(args):
     train_transform = pth_transforms.Compose([
         pth_transforms.RandomResizedCrop(224),
         pth_transforms.RandomHorizontalFlip(),
+        # pth_transforms.RandomApply([pth_transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1)], p=0.8),
+        # pth_transforms.RandomGrayscale(p=0.2),
         pth_transforms.ToTensor(),
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])

@@ -41,5 +41,5 @@ def vimlp_huge(**kwargs):
 
 
 def vimlp_giant(**kwargs):
-    model = VisionMLP(input_size=224*224*3, depth=16, hidden_features=9040, **kwargs)
+    model = VisionMLP(input_size=128*128*3, depth=16, hidden_features=12000, **kwargs)
     return model
