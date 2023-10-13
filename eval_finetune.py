@@ -54,15 +54,15 @@ def eval_linear(args):
     # ============ preparing data ... ============
     # validation transforms
     val_transform = pth_transforms.Compose([
-        pth_transforms.Resize(256, interpolation=3),
-        pth_transforms.CenterCrop(224),
+        pth_transforms.Resize(args.input_size + 2, interpolation=3),
+        pth_transforms.CenterCrop(args.input_size),
         pth_transforms.ToTensor(),
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
 
     # training transforms
     train_transform = pth_transforms.Compose([
-        pth_transforms.RandomResizedCrop(224),
+        pth_transforms.RandomResizedCrop(args.input_size),
         pth_transforms.RandomHorizontalFlip(),
         # pth_transforms.RandomApply([pth_transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.2, hue=0.1)], p=0.8),
         # pth_transforms.RandomGrayscale(p=0.2),
@@ -195,6 +195,8 @@ def validate_network(val_loader, model, args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Finetuning evaluation')
     parser.add_argument('--arch', default='vit_large', type=str, help='Architecture')
+    parser.add_argument('--input_size', default=224, type=int, help="""Size of images in pixels""")
+
     parser.add_argument('--patch_size', default=16, type=int, help='Patch resolution of the model.')
     parser.add_argument('--pretrained_weights', default='', type=str, help="Path to pretrained weights to evaluate.")
     parser.add_argument("--checkpoint_key", default="student", type=str, help='Key to use in the checkpoint (example: "teacher")')

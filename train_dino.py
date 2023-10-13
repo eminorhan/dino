@@ -45,7 +45,7 @@ def get_args_parser():
     parser = argparse.ArgumentParser('DINO', add_help=False)
 
     # Model parameters
-    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_small', 'vit_base', 'vit_large', 'vimlp_huge', 'vimlp_giant'] + torchvision_archs, help="""Name of architecture to train.""")
+    parser.add_argument('--arch', default='vit_small', type=str, choices=['vit_small', 'vit_base', 'vit_large', 'vimlp_huge', 'vimlp_giant', 'vimlp_collosal'] + torchvision_archs, help="""Name of architecture to train.""")
     parser.add_argument('--patch_size', default=16, type=int, help="""Size in pixels of input square patches - default 16 (for 16x16 patches). If <16, we recommend disabling mixed precision training (--use_fp16 false) to avoid instabilities.""")
     parser.add_argument('--input_size', default=224, type=int, help="""Size of images in pixels""")
 
@@ -76,7 +76,7 @@ def get_args_parser():
     parser.add_argument('--global_crops_scale', type=float, nargs='+', default=(0.2, 1.), help="""Scale range of the cropped image before resizing, relatively to the origin image. Used for large global view cropping. When disabling multi-crop (--local_crops_number 0), we recommand using a wider range of scale ("--global_crops_scale 0.14 1." for example)""")
     parser.add_argument('--local_crops_number', type=int, default=8, help="""Number of small local views to generate. Set this parameter to 0 to disable multi-crop training.""")
     parser.add_argument('--local_crops_scale', type=float, nargs='+', default=(0.05, 0.2), help="""Scale range of the cropped image before resizing, relatively to the origin image.""")
-    parser.add_argument('--original_augs', type=bool, default=False, help="""Whether or not to use the original data augmentations in DINO.""")
+    parser.add_argument('--original_augs', type=bool, default=True, help="""Whether or not to use the original data augmentations in DINO.""")
 
     # Misc
     parser.add_argument("--data_path", default="/scratch/eo41/data/saycam/SAY_5fps_300s_{000000..000009}.tar", type=str, help="""path to dataset""")
