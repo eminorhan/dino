@@ -1,18 +1,18 @@
 #!/bin/bash
 
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=4
-#SBATCH --gres=gpu:a100:4
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=480GB
-#SBATCH --time=168:00:00
+#SBATCH --mem=240GB
+#SBATCH --time=00:10:00
 #SBATCH --job-name=train_dino_vimlps_imagenet10k
 #SBATCH --output=train_dino_vimlps_imagenet10k_%A_%a.out
 #SBATCH --array=0
 
 export MASTER_ADDR=$(hostname -s)
 export MASTER_PORT=$(shuf -i 10000-65500 -n 1)
-export WORLD_SIZE=4
+export WORLD_SIZE=1
 
 SAVES=(
 	"dino_vimlp_imagenet10k" 
