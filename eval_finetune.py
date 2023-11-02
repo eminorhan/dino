@@ -54,7 +54,7 @@ def eval_linear(args):
     # ============ preparing data ... ============
     # validation transforms
     val_transform = pth_transforms.Compose([
-        pth_transforms.Resize(args.input_size + 2, interpolation=3),
+        pth_transforms.Resize(args.input_size + 16, interpolation=3),
         pth_transforms.CenterCrop(args.input_size),
         pth_transforms.ToTensor(),
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
